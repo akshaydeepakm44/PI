@@ -77,6 +77,7 @@ class Property(Base):
     seller_contact = Column(String(255), nullable=False)
     possession_date = Column(String(100), default="Immediate")
     developer_profile = Column(Text, nullable=True)
+    modules_data = Column(JSON, default=dict) # Portal modules: configs, towers, master plan, sustainability, etc.
 
     # Verification & Publishing Controls
     verification_status = Column(String(100), default="Seller provided / Unverified")

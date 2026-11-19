@@ -5,22 +5,38 @@
 
 @layer base {
   body {
-    @apply bg-brand-canvas text-slate-900 font-sans antialiased;
+    @apply bg-brand-canvas text-brand-dark font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight text-brand-dark;
   }
 }
 
-/* Custom scrollbars for data tables and sidebar */
+/* Custom scrollbars matching the minimal aesthetic */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #dedede;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #bfddc9;
+}
+
+/* Custom interactive pill buttons */
+.pill-tab {
+  @apply px-4 py-2 text-xs font-medium rounded-full transition-all duration-150 border cursor-pointer whitespace-nowrap;
+}
+.pill-tab-active {
+  @apply bg-brand-primary text-white border-brand-primary font-semibold shadow-xs;
+}
+.pill-tab-inactive {
+  @apply bg-white text-brand-muted border-brand-border hover:border-brand-mint hover:text-brand-dark;
 }

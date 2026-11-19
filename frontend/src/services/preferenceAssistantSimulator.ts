@@ -24,75 +24,63 @@ export interface GlobalChatMessage {
 }
 
 export const GLOBAL_SUGGESTED_CHIPS = [
-  '🏢 3 BHK Flats',
-  '🏡 2 BHK under ₹80 L',
-  '🌊 Sea-facing in Rushikonda',
-  '🔑 Ready to move',
-  '💰 Additional buying costs',
+  '🏢 3 BHK in Hyderabad',
+  '🏡 2 BHK in Gopanapally',
+  '🌳 High green cover (60%+)',
+  '⚡ EV charging & Solar',
+  '💰 Pricing intelligence breakdown',
   '📋 Due diligence checklist'
 ];
 
-// Fallback showcase property data in case query returned empty
+// Fallback showcase property data for Hyderabad
 export const SAMPLE_DIRECTORY_PROPERTIES: AssistantRecommendation[] = [
   {
     id: 1,
-    name: 'Ramez Seapoint',
+    name: 'Ramky Kingston Park Orbit',
     property_type: 'Apartment',
-    locality: 'Madhurawada',
-    city: 'Visakhapatnam',
-    asking_price: '₹75 L - 1.2 Cr',
-    area: '1,350 - 2,450 sq ft',
+    locality: 'Gopanapally',
+    city: 'Hyderabad',
+    asking_price: '₹1.12 - 1.62 Cr',
+    area: '1,300 - 1,880 sq ft',
     bhk: '2 & 3 BHK',
-    image: '/assets/ramez_seapoint.jpg',
-    highlights: ['Sea-facing balconies', 'Swimming pool & Gym', '3.2 km to Rushikonda Beach']
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
+    highlights: ['68% central greens', '16.5 acres master plan', '₹12,500/sqft incremental carpet upgrade rate']
   },
   {
     id: 2,
-    name: 'Sreeja Ocean View',
+    name: 'Solace at the Park',
     property_type: 'Apartment',
-    locality: 'Rushikonda',
-    city: 'Visakhapatnam',
-    asking_price: '₹68 L - 1.1 Cr',
-    area: '1,200 - 2,100 sq ft',
-    bhk: '2 & 3 BHK',
-    image: '/assets/ramez_seapoint.jpg',
-    highlights: ['Unobstructed ocean views', 'Ready to Move', 'Immediate IT SEZ access']
+    locality: 'Gachibowli',
+    city: 'Hyderabad',
+    asking_price: '₹1.35 - 2.10 Cr',
+    area: '1,450 - 2,200 sq ft',
+    bhk: '3 BHK',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+    highlights: ['Gachibowli IT Corridor', 'Clubhouse with Olympic pool', 'TSPCB noise compliant']
   },
   {
     id: 3,
-    name: 'Greenfield Palm Villas',
-    property_type: 'Villa',
-    locality: 'Bhimili Corridor',
-    city: 'Visakhapatnam',
-    asking_price: '₹1.45 Cr - 2.1 Cr',
-    area: '2,800 - 3,600 sq ft',
-    bhk: '3 & 4 BHK Villa',
-    image: '/assets/ramez_seapoint.jpg',
-    highlights: ['Private garden & terrace', 'Gated community security', 'Solar grid enabled']
+    name: 'Aparna Zenith',
+    property_type: 'Apartment',
+    locality: 'Narsingi',
+    city: 'Hyderabad',
+    asking_price: '₹1.25 - 1.95 Cr',
+    area: '1,380 - 2,050 sq ft',
+    bhk: '2.5 & 3 BHK',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+    highlights: ['Direct Nehru ORR access', '70% landscaped podium', 'Near Continental Hospital']
   },
   {
     id: 4,
-    name: 'Haritha Sky Greens',
+    name: 'My Home Aurelia',
     property_type: 'Apartment',
-    locality: 'Yendada',
-    city: 'Visakhapatnam',
-    asking_price: '₹55 L - 85 L',
-    area: '1,100 - 1,750 sq ft',
-    bhk: '2 & 3 BHK',
-    image: '/assets/ramez_seapoint.jpg',
-    highlights: ['Affordable pricing', 'Near NH16 Highway', 'Rainwater harvesting']
-  },
-  {
-    id: 5,
-    name: 'Panorama Grand Residencies',
-    property_type: 'Apartment',
-    locality: 'MVP Colony',
-    city: 'Visakhapatnam',
-    asking_price: '₹1.1 Cr - 1.8 Cr',
-    area: '1,800 - 2,600 sq ft',
+    locality: 'Tellapur',
+    city: 'Hyderabad',
+    asking_price: '₹1.45 - 2.40 Cr',
+    area: '1,520 - 2,400 sq ft',
     bhk: '3 & 4 BHK',
-    image: '/assets/ramez_seapoint.jpg',
-    highlights: ['Prime central locality', 'Walkable to hospitals & schools', 'Covered double parking']
+    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80',
+    highlights: ['Tellapur techno hub', 'Large luxury floor plates', 'Pre-certified green building']
   }
 ];
 
@@ -101,10 +89,10 @@ export function getGlobalInitialMessages(): GlobalChatMessage[] {
     {
       id: 'g-msg-1',
       sender: 'assistant',
-      text: `Hello! 👋 I am your **AI Property Assistant** for the HI IN Directory.\n\nTell me what kind of property you are looking for—such as **"I'm searching for 3 BHK flats"**, **"2 BHK in Madhurawada"**, or **"Villas under ₹1.5 Cr"**—or ask any questions about amenities, pricing, or due diligence.`,
+      text: `Hello! 👋 I am your **Platform-wide AI Property Advisor** for Hyderabad.\n\nTell me what kind of property you are looking for—such as **"3 BHK in Gopanapally"**, **"2 BHK in Gachibowli"**, or **"High green cover projects"**—or ask any questions regarding spatial design, architectural price efficiency, or due diligence.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sources: ['HI IN Property Directory', 'Location Research'],
-      suggestedFollowUps: ['3 BHK Flats', '2 BHK under ₹80 L', 'Near Beach Road']
+      sources: ['HiiN Property Intelligence Directory', 'Location Research'],
+      suggestedFollowUps: ['Show 3 BHK in Gopanapally', 'Compare 2 BHK vs 3 BHK pricing', 'Green cover comparison']
     }
   ];
 }

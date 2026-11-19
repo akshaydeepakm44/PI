@@ -10,6 +10,7 @@ from app.services.pipeline import run_property_research
 from app.services.evidence import build_property_evidence_layer
 from app.services.ai_analyst import generate_property_intelligence_report
 from app.services.comparator import compare_properties_evidence
+from app.services.calculators.pricing import calculate_pricing_intelligence
 
 logger = logging.getLogger(__name__)
 
@@ -259,3 +260,51 @@ def compare_properties_endpoint(
     except Exception as e:
         logger.error(f"Property comparison failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Comparison failed: {str(e)}")
+
+@router.get("/properties/{property_id}/pricing-intelligence")
+def get_pricing_intelligence_endpoint(
+    property_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Computes exact, deterministic architectural and pricing intelligence
+    across unit configurations (e.g. 2 BHK vs 3 BHK), area ratios, and incremental costs.
+    """
+    prop = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if not prop:
+        raise HTTPException(status_code=404, detail="Property not found")
+
+    configs = []
+    base_rate = None
+    if prop.modules_data and isinstance(prop.modules_data, dict):
+        configs = prop.modules_data.get("configurations", [])
+        base_rate = prop.modules_data.get("pricing_breakdown", {}).get("base_rate")
+
+    # If no modules_data configs, fallback to default 2 BHK & 3 BHK specs
+    if not configs:
+        configs = [
+            {"bhk": 2, "sbu_sqft": 1300, "carpet_sqft": 897, "price_cr": 1.12},
+            {"bhk": 3, "sbu_sqft": 1880, "carpet_sqft": 1297, "price_cr": 1.62}
+        ]
+        base_rate = 8600.0
+
+    return calculate_pricing_intelligence(configs, base_rate)
+
+@router.get("/properties/{property_id}/module-intelligence")
+def get_module_intelligence_endpoint(
+    property_id: int,
+    module: str = "units",
+    db: Session = Depends(get_db)
+):
+    """
+    Returns on-demand contextual AI intelligence for a specific property module:
+    neighbourhood, liveability, commute, master-plan, towers, units, amenities, sustainability, safety.
+    """
+    prop = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if not prop:
+        raise HTTPException(status_code=404, detail="Property not found")
+
+    from app.services.calculators.module_intelligence import analyze_module_intelligence
+    return analyze_module_intelligence(prop, module)
+
+

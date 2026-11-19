@@ -163,12 +163,12 @@ export const GlobalAIAssistantWidget: React.FC = () => {
                 <Search size={11} className="text-slate-400" />
                 <span>Searching across all directory listings</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">Visakhapatnam</span>
+              <span className="text-[10px] text-slate-400 font-mono">Hyderabad</span>
             </div>
           )}
 
           {/* Chat Messages Container */}
-          <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-slate-50/40">
+          <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-[#fcfcfc]">
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
 
@@ -181,8 +181,8 @@ export const GlobalAIAssistantWidget: React.FC = () => {
                   <div
                     className={`p-3 rounded-2xl max-w-[88%] text-xs leading-relaxed shadow-2xs ${
                       isUser
-                        ? 'bg-blue-600 text-white rounded-tr-xs'
-                        : 'bg-white text-slate-800 border border-slate-200 rounded-tl-xs space-y-2'
+                        ? 'bg-[#10261a] text-white rounded-tr-xs'
+                        : 'bg-white text-slate-800 border border-[#dedede] rounded-tl-xs space-y-2'
                     }`}
                   >
                     <p className="whitespace-pre-line">{msg.text}</p>
@@ -304,17 +304,17 @@ export const GlobalAIAssistantWidget: React.FC = () => {
               <button
                 type="submit"
                 disabled={!inputQuery.trim() || isTyping}
-                className="p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-lg transition-colors shadow-2xs"
+                className="p-2 bg-[#10261a] hover:bg-[#1e6b3a] disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-lg transition-colors shadow-2xs"
                 title="Send message"
               >
                 <Send size={13} />
               </button>
             </form>
             <div className="flex items-center justify-between text-[9.5px] text-slate-400 px-1 mt-1">
-              <span>Interactive preference & search mockup</span>
+              <span>HiiN Property Intelligence Assistant</span>
               <button
                 onClick={handleResetChat}
-                className="hover:text-indigo-600 underline cursor-pointer"
+                className="hover:text-[#1e6b3a] underline cursor-pointer"
               >
                 Reset demo
               </button>
@@ -327,23 +327,23 @@ export const GlobalAIAssistantWidget: React.FC = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold text-xs shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-white/20 select-none cursor-pointer"
+          className="fixed bottom-6 right-6 z-50 group flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#10261a] hover:bg-[#1e6b3a] text-white font-semibold text-xs shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-[#8bcaa0]/40 select-none cursor-pointer"
           title="Open AI Property Assistant"
         >
           <div className="relative flex items-center justify-center">
-            <Bot size={18} className="text-white group-hover:rotate-12 transition-transform duration-300" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-indigo-600 animate-pulse" />
+            <Bot size={18} className="text-[#8bcaa0] group-hover:rotate-12 transition-transform duration-300" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#8bcaa0] border-2 border-[#10261a] animate-pulse" />
           </div>
 
           <div className="flex flex-col text-left">
             <span className="leading-tight font-bold">Ask AI Assistant</span>
-            <span className="text-[10px] text-indigo-100 font-normal leading-none hidden sm:inline">
+            <span className="text-[10px] text-[#8bcaa0] font-normal leading-none hidden sm:inline">
               3 BHK • 2 BHK • Diligence
             </span>
           </div>
 
           <span className="p-1 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors ml-0.5">
-            <Sparkles size={12} className="text-amber-300" />
+            <Sparkles size={12} className="text-[#8bcaa0]" />
           </span>
         </button>
       )}

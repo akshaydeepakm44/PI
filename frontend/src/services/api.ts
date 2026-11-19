@@ -205,6 +205,16 @@ export const intelligenceApi = {
     });
     return res.data;
   },
+  getPricingIntelligence: async (propertyId: number): Promise<any> => {
+    const res = await api.get(`/intelligence/properties/${propertyId}/pricing-intelligence`);
+    return res.data;
+  },
+  getModuleIntelligence: async (propertyId: number, module: string): Promise<any> => {
+    const res = await api.get(`/intelligence/properties/${propertyId}/module-intelligence`, {
+      params: { module }
+    });
+    return res.data;
+  },
   compareProperties: async (
     propertyIds: number[],
     buyerPreferences?: BuyerPreferences

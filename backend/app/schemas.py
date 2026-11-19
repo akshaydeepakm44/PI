@@ -80,6 +80,7 @@ class PropertyBase(BaseModel):
     seller_contact: str
     possession_date: str = "Immediate"
     developer_profile: Optional[str] = None
+    modules_data: Optional[Dict[str, Any]] = None
 
     # Status
     status: str = "published" # draft, published
@@ -117,6 +118,7 @@ class PropertyUpdate(BaseModel):
     construction_status: Optional[str] = None
     photos: Optional[List[Dict[str, Any]]] = None
     documents: Optional[List[Dict[str, Any]]] = None
+    modules_data: Optional[Dict[str, Any]] = None
     seller_name: Optional[str] = None
     seller_contact: Optional[str] = None
     possession_date: Optional[str] = None

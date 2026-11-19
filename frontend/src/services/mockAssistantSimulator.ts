@@ -17,14 +17,12 @@ export interface ChatMessage {
 }
 
 export const SUGGESTED_QUESTIONS = [
-  'What are the key details of this property?',
-  'What amenities are available?',
-  'What schools and hospitals are nearby?',
-  'What are the main advantages and limitations?',
-  'What additional costs should I consider?',
-  'What information is still missing?',
-  'What questions should I ask the seller?',
-  'How does this property fit my preferences?'
+  'Explain the most interesting design aspects of this project',
+  'What are the main trade-offs between the 2 BHK and 3 BHK configurations?',
+  'Does the central green connect conveniently to all six towers?',
+  'How does the environmental liveability compare with road connectivity?',
+  'What should I investigate further before visiting?',
+  'What important information is missing from this property\'s records?'
 ];
 
 // Helper to format timestamps consistently
@@ -35,16 +33,13 @@ export function getCurrentTimeFormatted(): string {
 
 // Generate pre-loaded demo conversation
 export function getInitialDemoMessages(property?: Property | null): ChatMessage[] {
-  const propName = property?.name || 'Sea Breeze Tower Apartment';
-  const propType = property?.property_type ? property.property_type.replace('_', ' ') : '3-bedroom apartment';
-  const propArea = property?.area ? `${property.area.toLocaleString()} ${property.area_unit || 'sq. ft.'}` : '1,450 sq. ft.';
-  const propPrice = property?.asking_price || '₹85 lakh';
+  const propName = property?.name || 'Ramky Kingston Park Orbit';
 
   return [
     {
       id: 'msg-init-1',
       sender: 'assistant',
-      text: `Hello! I am your **AI Property Assistant** for **${propName}**.\n\nI can help summarize listing details, evaluate nearby amenities and road connectivity, highlight missing documentation, and estimate potential acquisition charges based on available evidence. How can I assist your evaluation today?`,
+      text: `Hello! I am your **Platform-wide AI Assistant** for **${propName}**.\n\nI have ingested the master plan, unit layouts, RERA disclosures, live atmospheric telemetry, and topological road graphs. I can reason across architectural efficiency, tower orientations, environmental quality, and cost trade-offs.\n\nWhat would you like to explore?`,
       timestamp: '10:30 AM',
       sources: ['Property listing', 'Location research'],
       notVerifiedNotice: false
@@ -52,29 +47,29 @@ export function getInitialDemoMessages(property?: Property | null): ChatMessage[
     {
       id: 'msg-init-2',
       sender: 'buyer',
-      text: 'What are the key details of this property?',
+      text: 'Explain the most interesting design aspects of this project.',
       timestamp: '10:31 AM'
     },
     {
       id: 'msg-init-3',
       sender: 'assistant',
-      text: `This listing describes a **${propType}** with a stated area of **${propArea}** and an asking price of **${propPrice}**.\n\nThese details come directly from the property listing and have not been independently verified.`,
+      text: `One interesting aspect of this project is the relationship between its **six towers** and the **central landscaped area (68% green cover)**. The master plan indicates a shared central green arrangement rather than isolated green pockets, with a peripheral vehicular loop that eliminates interior vehicle traffic.\n\nThe unit records also show identical **carpet-to-super-built-up ratios (69.0%)** across both the 2 BHK and 3 BHK configurations. This proves that the developer maintained consistent spatial efficiency across unit tiers.\n\nHowever, the available records do not yet establish room-level sunlight exposure CAD files or the exact walking distance from outer towers (e.g., Tower 6) to the sports clubhouse.`,
       timestamp: '10:31 AM',
-      sources: ['Property listing', 'Seller-provided information'],
+      sources: ['Property listing', 'Seller-provided information', 'Sample calculation'],
       notVerifiedNotice: true
     },
     {
       id: 'msg-init-4',
       sender: 'buyer',
-      text: 'What additional costs should I consider?',
+      text: 'What are the main trade-offs between the 2 BHK and 3 BHK configurations?',
       timestamp: '10:32 AM'
     },
     {
       id: 'msg-init-5',
       sender: 'assistant',
-      text: `Your total cost may include the asking price, registration charges, applicable taxes, maintenance deposits and other fees.\n\nThe exact amount depends on the transaction and applicable charges. These costs are not fully available in this sample listing.`,
+      text: `The 3 BHK configuration provides **400 sq ft of additional carpet area** (1,297 vs 897 sq ft) over the 2 BHK, alongside a **₹50 lakh higher starting price** (₹1.62 Cr vs ₹1.12 Cr).\n\nThis yields an indicative **₹12,500 per additional carpet sq ft** upgrade cost. Because this closely tracks the standalone carpet cost of both units (~₹12,486 - ₹12,490/sqft), buyers pay a proportional price for the extra bedroom rather than an inflated upgrade premium.\n\n*Important disclosure: ₹12,500/sq ft is the incremental price difference divided by additional carpet area, not the standalone rate. Floor-rise charges (₹50/sqft) and facing premiums (₹100/sqft) must be factored into the final unit selection.*`,
       timestamp: '10:32 AM',
-      sources: ['Sample calculation', 'Information unavailable'],
+      sources: ['Sample calculation', 'Property listing'],
       notVerifiedNotice: true
     }
   ];
@@ -99,8 +94,68 @@ export async function simulateAssistantResponse(
   const propType = property?.property_type ? property.property_type.replace('_', ' ') : 'apartment';
   const propArea = property?.area ? `${property.area.toLocaleString()} ${property.area_unit || 'sq. ft.'}` : '1,450 sq. ft.';
   const propPrice = property?.asking_price || '₹85 lakh';
-  const propLocality = property?.locality || 'Visakhapatnam';
+  const propLocality = property?.locality || 'Gopanapally, Hyderabad';
   const propRate = property?.rate_per_sqft ? `₹${property.rate_per_sqft.toLocaleString()}/sq.ft` : null;
+
+  // Cross-Module Query 1: Design Aspects & Master Plan
+  if (q.includes('design aspect') || q.includes('interesting') || q.includes('architectural design')) {
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `One interesting architectural aspect of **${propName}** is the relationship between its **six towers** and the **central 68% landscaped green area**.\n\n• **Circulation**: The master plan indicates a shared central green arrangement rather than isolated green pockets. A peripheral vehicular loop keeps all surface driveways along the boundary, ensuring zero vehicle traffic through the pedestrian garden.\n• **Efficiency**: The unit records show identical carpet-to-super-built-up ratios (~69%) across both 2 BHK and 3 BHK configurations, demonstrating uniform space planning.\n• **Investigation Needed**: A useful next check would be to measure the actual walking distance from Tower 6's entrance to the sports zone, and verify room-level natural light access from CAD orientation drawings.`,
+      timestamp: time,
+      sources: ['Property listing', 'Location research', 'Seller-provided information'],
+      notVerifiedNotice: true
+    };
+  }
+
+  // Cross-Module Query 2: 2 BHK vs 3 BHK Configuration Trade-offs
+  if (q.includes('trade-off') || q.includes('tradeoff') || q.includes('2 bhk') || q.includes('3 bhk') || q.includes('configuration') || q.includes('upgrade')) {
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `Comparing the two advertised configurations for **${propName}**:\n\n• **Area Difference**: The 3 BHK provides **400 sq ft of additional carpet area** (1,297 sq ft vs 897 sq ft; a +44.6% increase).\n• **Price Difference**: Advertised starting price increases by **₹50 lakh** (₹1.62 Cr vs ₹1.12 Cr).\n• **Incremental Carpet Cost**: **₹12,500 per additional carpet sq ft** (₹50,00,000 ÷ 400 sq ft).\n• **Efficiency**: Both units deliver an identical **69.0% carpet-to-SBU ratio**.\n\n**Key Finding**: Because ₹12,500/sq ft matches the standalone carpet rates (~₹12,486/sq ft for 2 BHK and ~₹12,490/sq ft for 3 BHK), you are paying fair arithmetic value for the extra bedroom. However, note that floor rise (₹50/sqft per floor) and facing charges (₹100/sqft) will influence the final out-of-pocket cost.`,
+      timestamp: time,
+      sources: ['Sample calculation', 'Property listing'],
+      notVerifiedNotice: true
+    };
+  }
+
+  // Cross-Module Query 3: Central Green Connectivity to Six Towers
+  if (q.includes('central green') || q.includes('connect conveniently') || q.includes('all six towers')) {
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `Yes, the master plan is explicitly laid out around a **central landscaped park** covering 68% of the 16.5-acre site:\n\n• **Pedestrian Corridors**: All six 24-floor towers connect to the central green via shaded pedestrian walkways without crossing vehicle driveways.\n• **Accessibility**: Towers 2, 3, and 4 are directly adjacent to the clubhouse podium and primary pool area. Towers 1 and 6 have a slightly longer walk (approx 150-180 meters) towards the central amenities zone.\n• **Safety**: The peripheral ring road routes all vehicular traffic around the project boundary directly down to basement ramps.`,
+      timestamp: time,
+      sources: ['Property listing', 'Location research'],
+      notVerifiedNotice: false
+    };
+  }
+
+  // Cross-Module Query 4: Environmental Liveability vs Road Connectivity
+  if (q.includes('environmental') || q.includes('liveability') || q.includes('air quality') || q.includes('noise')) {
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `Synthesizing environmental sensor data and transit connectivity for **${propName}**:\n\n• **Acoustics & Air Quality**: Live telemetry indicates a satisfactory **AQI of 94** (CPCB) and daytime ambient noise of **62 dB** (TSPCB Gachibowli monitor). Units facing into the central green will experience approximately 8-10 dB less traffic noise than outer road-facing units.\n• **Connectivity**: Located on the Gopanapally arterial corridor with direct access to DLF Cyber City (8.5 km, 22 mins) and Airport (32 km, 45 mins via ORR).\n• **Balance**: The project achieves high green isolation internally despite being within 15 minutes of major Financial District IT employment centres.`,
+      timestamp: time,
+      sources: ['Location research', 'Sample calculation'],
+      notVerifiedNotice: false
+    };
+  }
+
+  // Cross-Module Query 5: What to investigate before visiting
+  if (q.includes('investigate') || q.includes('before visiting') || q.includes('site visit') || q.includes('check before')) {
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `Key items to verify on your physical site visit for **${propName}**:\n\n1. **Tower-specific Orientation**: Inspect whether the unit's balconies face the morning sun or afternoon glare, and whether neighboring towers obstruct view corridors.\n2. **Actual Pedestrian Distance**: Walk from the specific tower entrance (e.g. Tower 5 or 6) to the clubhouse and children's playground to evaluate daily convenience.\n3. **Floor-rise & Premium Schedule**: Confirm the exact cost escalation per floor and facing surcharge.\n4. **Drainage & Monsoon Access**: Observe low-lying areas along the approach road towards Gopanapally X Roads.\n5. **Fire Safety & NOC**: Request physical inspection of the TS Disaster Response & Fire Services approval documentation.`,
+      timestamp: time,
+      sources: ['Property listing', 'Location research', 'Information unavailable'],
+      notVerifiedNotice: true
+    };
+  }
 
   // 1. Key Details / Specifications
   if (

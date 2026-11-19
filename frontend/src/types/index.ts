@@ -69,6 +69,7 @@ export interface Property {
   seller_contact: string;
   possession_date: string;
   developer_profile?: string | null;
+  modules_data?: Record<string, any> | null;
   verification_status: string;
   status: 'draft' | 'published' | 'suspended';
   is_demo: boolean;

@@ -13,34 +13,26 @@ export const PublicLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf8f5] text-slate-900 antialiased font-sans">
-      {/* Top Navbar matching the uploaded image */}
-      <header className="w-full bg-[#faf8f5]/90 backdrop-blur-md border-b border-slate-200/70 sticky top-0 z-40 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#fcfcfc] text-[#111111] antialiased font-sans">
+      {/* Top Navbar matching the portal theme */}
+      <header className="w-full bg-[#ffffff]/90 backdrop-blur-md border-b border-[#eeeeee] sticky top-0 z-40 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           {/* Left: Brand + Navigation Links */}
           <div className="flex items-center gap-10">
-            <Link to="/" className="flex items-center gap-2 group">
-              <span className="font-serif text-2xl font-bold tracking-tight text-slate-900 group-hover:text-[#133238] transition-colors">
-                HI IN
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <span className="w-8 h-8 rounded bg-[#10261a] text-[#8bcaa0] font-bold text-sm flex items-center justify-center font-heading">
+                H
+              </span>
+              <span className="font-heading text-2xl font-bold tracking-tight text-[#10261a] group-hover:text-[#1e6b3a] transition-colors">
+                HiiN
               </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-600">
-              <Link to="/" className="hover:text-slate-950 transition-colors font-semibold">Home</Link>
-              <a
-                href="#about"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (location.pathname !== '/') {
-                    navigate('/#about');
-                  } else {
-                    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="hover:text-slate-950 transition-colors"
-              >
-                About
-              </a>
+            <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-[#5c5c5c]">
+              <Link to="/" className="hover:text-[#111111] transition-colors font-semibold">Home</Link>
+              <Link to="/buyer" className="hover:text-[#111111] transition-colors">Projects</Link>
+              <Link to="/buyer/compare" className="hover:text-[#111111] transition-colors">Compare</Link>
+              <Link to="/buyer/commute" className="hover:text-[#111111] transition-colors">My Commute</Link>
             </nav>
           </div>
 
@@ -50,14 +42,14 @@ export const PublicLayout: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Link
                   to={user?.role === 'seller' ? '/seller' : user?.role === 'admin' ? '/admin' : '/buyer'}
-                  className="px-4 py-2 bg-[#133238] text-white text-xs font-semibold rounded-full hover:bg-[#1a444c] flex items-center gap-1.5 shadow-sm transition-all"
+                  className="px-4 py-2 bg-[#10261a] text-white text-xs font-semibold rounded-full hover:bg-[#1e6b3a] flex items-center gap-1.5 shadow-sm transition-all"
                 >
                   <UserCheck size={13} />
                   <span>{user?.role ? user.role.toUpperCase() : 'Workspace'}</span>
                 </Link>
                 <button
                   onClick={() => { logout(); navigate('/'); }}
-                  className="text-xs text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+                  className="text-xs text-[#5c5c5c] hover:text-[#111111] transition-colors cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -66,7 +58,7 @@ export const PublicLayout: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors px-4 py-2 border border-slate-200 hover:border-slate-300 rounded-full"
+                  className="text-xs font-semibold text-[#111111] hover:text-[#10261a] transition-colors px-4 py-2 border border-[#dedede] hover:border-[#1e6b3a] rounded-full"
                 >
                   Sign in
                 </Link>

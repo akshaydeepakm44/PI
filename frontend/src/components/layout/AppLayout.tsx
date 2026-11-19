@@ -92,13 +92,13 @@ export const AppLayout: React.FC = () => {
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded bg-white text-brand-sidebar font-extrabold flex items-center justify-center text-base tracking-tighter">
-              HI
+            <div className="w-9 h-9 rounded bg-[#8bcaa0] text-[#10261a] font-extrabold flex items-center justify-center text-sm font-heading tracking-tighter shadow-xs">
+              HiiN
             </div>
             {!isCollapsed && (
               <div>
-                <span className="font-bold text-base tracking-tight text-white block leading-tight">HI IN</span>
-                <span className="text-[10px] text-slate-400 font-mono tracking-widest uppercase block">Property Directory</span>
+                <span className="font-bold text-base tracking-tight text-white block leading-tight font-heading">HiiN</span>
+                <span className="text-[10px] text-brand-mint font-mono tracking-widest uppercase block">Property Intelligence</span>
               </div>
             )}
           </Link>

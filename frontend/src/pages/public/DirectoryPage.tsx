@@ -22,15 +22,14 @@ import { EmptyState } from '../../components/common/EmptyState';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 
 const POPULAR_LOCALITIES = [
-  'Madhurawada',
-  'Rushikonda',
-  'MVP Colony',
-  'Gajuwaka',
-  'Yendada',
-  'Siripuram',
-  'Sagar Nagar',
-  'Seethammadhara',
-  'Bhimili'
+  'Gopanapally',
+  'Gachibowli',
+  'Kokapet',
+  'Tellapur',
+  'Narsingi',
+  'Puppalaguda',
+  'Financial District',
+  'Kondapur'
 ];
 
 const PRICE_BANDS = [
@@ -152,7 +151,7 @@ export const DirectoryPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Property Directory</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Browse verified Visakhapatnam properties with stored cadastral coordinates and multi-source due diligence.
+            Browse verified Hyderabad properties with stored cadastral coordinates and multi-source due diligence.
           </p>
         </div>
 
