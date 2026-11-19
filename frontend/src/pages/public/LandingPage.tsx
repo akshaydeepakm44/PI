@@ -37,34 +37,23 @@ export const LandingPage: React.FC = () => {
   });
 
   const handlePropertyClick = (propertyId: number) => {
-    if (!isAuthenticated) {
-      navigate('/login?role=buyer');
-    } else {
-      const targetRole = role === 'seller' ? 'seller' : role === 'admin' ? 'admin' : 'buyer';
-      navigate(`/${targetRole}/properties/${propertyId}`);
-    }
+    navigate(`/properties/${propertyId}`);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isAuthenticated) {
-      navigate('/login?role=buyer');
-    } else {
-      navigate(`/buyer/properties?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
+    navigate(`/directory?search=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    if (!isAuthenticated) {
-      navigate('/login?role=buyer');
-    } else {
-      navigate(`/buyer/properties?property_type=${category}`);
-    }
+    navigate(`/directory?property_type=${category}`);
   };
 
   const handleRoleEnter = (targetRole: 'seller' | 'buyer' | 'admin') => {
-    navigate(`/login?role=${targetRole}`);
+    if (targetRole === 'seller') navigate('/seller');
+    else if (targetRole === 'admin') navigate('/admin');
+    else navigate('/directory');
   };
 
   // Filtered properties for showcase
@@ -318,10 +307,10 @@ export const LandingPage: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => navigate(isAuthenticated ? '/buyer/map' : '/login?role=buyer')}
+            onClick={() => navigate('/map')}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#dedede] text-xs font-semibold text-[#10261a] hover:bg-[#10261a] hover:text-white transition-all self-start sm:self-auto shadow-xs cursor-pointer"
           >
-            <span>{isAuthenticated ? 'Explore All on Map' : 'Sign in to Explore on Map'}</span>
+            <span>Explore All on Map</span>
             <ArrowRight size={13} />
           </button>
         </div>
@@ -375,7 +364,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 <div className="pt-2 text-[11px] text-[#1e6b3a] font-semibold flex items-center justify-between group-hover:underline">
-                  <span>{isAuthenticated ? 'View Due Diligence Dossier' : 'Sign in to View Dossier & AI'}</span>
+                  <span>View Project Dossier & AI</span>
                   <ChevronRight size={13} />
                 </div>
               </div>

@@ -364,7 +364,7 @@ export const DirectoryPage: React.FC = () => {
                   <div className="p-4 space-y-3">
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-mono block">
-                        {p.locality}, Visakhapatnam
+                        {p.locality}, {p.city || 'Hyderabad'}
                       </span>
                       <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-0.5">
                         <Link to={detailLink}>{p.name}</Link>

@@ -48,24 +48,8 @@ const queryClient = new QueryClient({
   }
 });
 
-// Guard helper for Role-Based Protected Routes
-const RoleGuard: React.FC<{ allowedRoles: string[]; children: React.ReactNode }> = ({ allowedRoles, children }) => {
-  const { role, isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div className="p-8 text-center text-xs text-slate-500 font-mono">Verifying authorization...</div>;
-  }
-
-  // If not authenticated, redirect to login page
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // If not in allowed role, redirect to their home workspace
-  if (!role || !allowedRoles.includes(role)) {
-    return <Navigate to={role === 'seller' ? '/seller' : role === 'admin' ? '/admin' : '/buyer'} replace />;
-  }
-
+// Open access without login barriers matching reference portal
+const RoleGuard: React.FC<{ allowedRoles?: string[]; children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
@@ -75,14 +59,19 @@ export const App: React.FC = () => {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* --- Public Layout Routes --- */}
+            {/* --- Public / Main Portal Routes (Zero Login Wall) --- */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              {/* Protect standalone directory and properties from unauthenticated bypass */}
-              <Route path="/directory" element={<Navigate to="/login?role=buyer" replace />} />
-              <Route path="/properties/:id" element={<Navigate to="/login?role=buyer" replace />} />
+              <Route path="/directory" element={<DirectoryPage />} />
+              <Route path="/projects" element={<DirectoryPage />} />
+              <Route path="/properties/:id" element={<PropertyDetailPage />} />
+              <Route path="/compare" element={<ComparePropertiesPage />} />
+              <Route path="/map" element={<InteractiveMapPage />} />
+              <Route path="/commute" element={<MyCommutePage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/assistant" element={<AIAssistantPage />} />
+              <Route path="/login" element={<Navigate to="/" replace />} />
+              <Route path="/register" element={<Navigate to="/" replace />} />
             </Route>
 
             {/* --- Authenticated App Layout Routes --- */}
