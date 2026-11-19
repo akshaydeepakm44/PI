@@ -1,0 +1,15 @@
+{
+  "name": "hi-in-property-directory",
+  "version": "2.0.0",
+  "private": true,
+  "description": "HI IN Property Directory — Evidence-Backed Real Estate Intelligence Platform",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/live.mjs",
+    "start": "node scripts/live.mjs",
+    "live": "node scripts/live.mjs",
+    "dev:backend": "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --app-dir backend",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  }
+}

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>HI IN · Map-First Property Due-Diligence & Context Intelligence</title>
+  <meta name="description" content="HI IN turns property listings into map-first, evidence-labelled intelligence. Explore properties with live OpenStreetMap discovery, real-time air quality telemetry, and AI due-diligence." />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Root Container -->
+  <div id="app-root"></div>
+
+  <!-- Role Login Modal (3 Roles) -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="flex items-center justify-between" style="margin-bottom:16px">
+        <h3>Select Demo Workspace</h3>
+        <button class="btn btn-sm btn-secondary" onclick="document.getElementById('login-modal').classList.remove('active')">✕</button>
+      </div>
+      <p class="text-muted text-sm" style="margin-bottom:20px">
+        HI IN is organized around three key roles in the property due-diligence pipeline. Choose a role to log in immediately:
+      </p>
+
+      <div id="role-seller-card" class="role-option-card selected" onclick="window.selectModalRole('seller')">
+        <div style="font-size:1.5rem">🏗️</div>
+        <div>
+          <div class="font-bold text-sm">Role 1 · Seller / Builder</div>
+          <div class="text-muted text-xs" style="margin-top:2px">
+            Provide property intake facts, upload deeds and plans, inspect consistency flags, publish to directory, and respond to buyer inquiries.
+          </div>
+        </div>
+      </div>
+
+      <div id="role-buyer-card" class="role-option-card" onclick="window.selectModalRole('buyer')">
+        <div style="font-size:1.5rem">🏡</div>
+        <div>
+          <div class="font-bold text-sm">Role 2 · Buyer</div>
+          <div class="text-muted text-xs" style="margin-top:2px">
+            Browse properties, run automated AI assistance, examine commute times and live atmospheric telemetry, save wishlists, and compare.
+          </div>
+        </div>
+      </div>
+
+      <div id="role-admin-card" class="role-option-card" onclick="window.selectModalRole('admin')">
+        <div style="font-size:1.5rem">🛡️</div>
+        <div>
+          <div class="font-bold text-sm">Role 3 · Platform Admin</div>
+          <div class="text-muted text-xs" style="margin-top:2px">
+            Supervise research pipeline jobs, check OpenStreetMap & CPCB latency, resolve data discrepancies, and approve/suspend listings.
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between" style="margin-top:24px">
+        <button class="btn btn-secondary" onclick="document.getElementById('login-modal').classList.remove('active')">Cancel</button>
+        <button id="modal-submit-btn" class="btn btn-ai" onclick="window.confirmModalLogin()">
+          Enter Workspace
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progressive Publishing Simulation Modal -->
+  <div id="publish-modal" class="modal-overlay">
+    <div class="modal-box" style="text-align:center;padding:32px">
+      <div style="width:60px;height:60px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px">
+        🚀
+      </div>
+      <h3>Publishing & Research Pipeline</h3>
+      <p class="text-muted text-xs" style="margin:6px 0 20px">
+        Executing automated spatial discovery and consistency checks for this property...
+      </p>
+
+      <div id="publish-steps" style="text-align:left;min-height:90px">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Realtime Data Modal -->
+  <div id="upload-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:600px">
+      <div class="flex items-center justify-between" style="margin-bottom:14px">
+        <h3>Upload Realtime Property Data</h3>
+        <button class="btn btn-sm btn-secondary" onclick="document.getElementById('upload-modal').classList.remove('active')">✕</button>
+      </div>
+      <p class="text-muted text-xs" style="margin-bottom:14px">
+        Paste a JSON array of real property objects or a single real property object. The system will immediately bind real OpenStreetMap coordinates, calculate travel distances, and read CPCB / OpenAQ air quality telemetry.
+      </p>
+
+      <div class="form-group">
+        <div class="flex items-center justify-between" style="margin-bottom:6px">
+          <label class="form-label" style="margin-bottom:0">JSON Payload</label>
+          <button class="btn btn-sm btn-secondary" type="button" style="padding:2px 8px;font-size:11px" onclick="window.insertSampleJsonTemplate()">
+            Insert JSON Template
+          </button>
+        </div>
+        <textarea id="upload-json-input" class="form-textarea" rows="9" placeholder='Paste JSON here: [ { "name": "...", "price": "...", "lat": 17.39, "lng": 78.33 } ]' style="font-family:'JetBrains Mono',monospace;font-size:12px"></textarea>
+      </div>
+
+      <div class="flex items-center justify-between" style="margin-top:16px">
+        <button class="btn btn-secondary" onclick="document.getElementById('upload-modal').classList.remove('active')">Cancel</button>
+        <button class="btn btn-ai" onclick="window.processUploadedData()">
+          Import Realtime Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="app-toast" class="toast-notice"></div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Module Script -->
+  <script type="module">
+    import { setRole, navigate, openSellerForm, renderApp } from './app.js';
+
+    let selectedRole = 'seller';
+
+    window.selectModalRole = (role) => {
+      selectedRole = role;
+      document.querySelectorAll('.role-option-card').forEach(el => el.classList.remove('selected'));
+      const activeCard = document.getElementById(`role-${role}-card`);
+      if (activeCard) activeCard.classList.add('selected');
+    };
+
+    window.confirmModalLogin = () => {
+      setRole(selectedRole);
+    };
+
+    window.openSellerForm = openSellerForm;
+    window.navigate = navigate;
+    window.setRole = setRole;
+    window.renderApp = renderApp;
+
+    // Immediately execute renderApp
+    renderApp();
+  </script>
+</body>
+</html>
