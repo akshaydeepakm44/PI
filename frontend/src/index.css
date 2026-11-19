@@ -1,4 +1,21 @@
 @import 'leaflet/dist/leaflet.css';
+
+@font-face {
+  font-family: 'Cal Sans';
+  src: url('/fonts/CalSans-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

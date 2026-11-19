@@ -1,416 +1,519 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { propertyApi, wishlistApi } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { propertyApi } from '../../services/api';
 import {
-  Search,
-  SlidersHorizontal,
   MapPin,
-  Heart,
-  Building,
-  ArrowUpDown,
-  Filter,
-  X,
-  ArrowRight,
-  IndianRupee,
+  Bookmark,
+  Calendar,
   Layers,
-  Bot
+  Building2,
+  SlidersHorizontal,
+  Search,
+  Check,
+  ChevronDown,
+  ArrowUpDown,
+  Home,
+  ArrowRight
 } from 'lucide-react';
-import { Badge } from '../../components/common/Badge';
-import { EmptyState } from '../../components/common/EmptyState';
-import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 
-const POPULAR_LOCALITIES = [
-  'Gopanapally',
-  'Gachibowli',
-  'Kokapet',
-  'Tellapur',
-  'Narsingi',
-  'Puppalaguda',
-  'Financial District',
-  'Kondapur'
+interface ProjectListItem {
+  id: number;
+  slug: string;
+  name: string;
+  city: string;
+  location: string;
+  builder: string;
+  possession: string;
+  status: string;
+  bhk: string;
+  acres: string;
+  homes: string;
+  floors: string;
+  towers: string;
+  price: string;
+  rate: string;
+  gallery: string[];
+  configs: {
+    bhk: number;
+    price: string;
+    size: string;
+  }[];
+}
+
+const PROJECTS_DATA: ProjectListItem[] = [
+  {
+    id: 1,
+    slug: 'ramky',
+    name: 'Ramky Kingston Park Orbit',
+    city: 'Hyderabad',
+    location: 'Gopanapally',
+    builder: 'Ramky Estates',
+    possession: 'Possession Jun 2027',
+    status: 'Under construction',
+    bhk: '2–3',
+    acres: '16.5',
+    homes: '1,406',
+    floors: '24',
+    towers: '6',
+    price: '₹1.12 – 1.62 Cr',
+    rate: '₹8,600 / sq ft',
+    gallery: ['/design/buyer-1.jpeg', '/design/clubhouse.jpeg', '/design/garden.jpeg', '/design/entrance.jpeg'],
+    configs: [
+      { bhk: 2, price: '1.12 Cr', size: '1,300 sq ft' },
+      { bhk: 3, price: '1.62 Cr', size: '1,880 sq ft' }
+    ]
+  },
+  {
+    id: 4,
+    slug: 'aurelia',
+    name: 'Aurelia Heights',
+    city: 'Hyderabad',
+    location: 'Puppalaguda',
+    builder: 'Aurelia Developers',
+    possession: 'Possession Mar 2028',
+    status: 'Under construction',
+    bhk: '3–4',
+    acres: '7.2',
+    homes: '580',
+    floors: '28',
+    towers: '4',
+    price: '₹1.58 – 2.30 Cr',
+    rate: '₹9,900 / sq ft',
+    gallery: ['/design/buyer-2.jpeg', '/design/project.jpeg', '/design/hero.jpeg'],
+    configs: [
+      { bhk: 3, price: '1.58 Cr', size: '1,650 sq ft' },
+      { bhk: 4, price: '2.30 Cr', size: '2,400 sq ft' }
+    ]
+  },
+  {
+    id: 5,
+    slug: 'sattva',
+    name: 'Sattva Greenwood',
+    city: 'Hyderabad',
+    location: 'Kokapet',
+    builder: 'Sattva Group',
+    possession: 'Ready to move',
+    status: 'Ready to move',
+    bhk: '3–4',
+    acres: '11',
+    homes: '890',
+    floors: '32',
+    towers: '5',
+    price: '₹1.52 – 2.65 Cr',
+    rate: '₹10,800 / sq ft',
+    gallery: ['/design/buyer-3.jpeg', '/design/garden.jpeg', '/design/clubhouse.jpeg'],
+    configs: [
+      { bhk: 3, price: '1.52 Cr', size: '1,720 sq ft' },
+      { bhk: 4, price: '2.65 Cr', size: '2,650 sq ft' }
+    ]
+  },
+  {
+    id: 6,
+    slug: 'lakeview',
+    name: 'Lakeview Residences',
+    city: 'Hyderabad',
+    location: 'Narsingi',
+    builder: 'Lakeview Homes',
+    possession: 'Possession Dec 2027',
+    status: 'Under construction',
+    bhk: '2–3',
+    acres: '5.4',
+    homes: '410',
+    floors: '20',
+    towers: '3',
+    price: '₹98 L – 1.45 Cr',
+    rate: '₹8,300 / sq ft',
+    gallery: ['/design/buyer-4.jpeg', '/design/entrance.jpeg', '/design/hero.jpeg'],
+    configs: [
+      { bhk: 2, price: '98 L', size: '1,180 sq ft' },
+      { bhk: 3, price: '1.45 Cr', size: '1,590 sq ft' }
+    ]
+  },
+  {
+    id: 2,
+    slug: 'solace',
+    name: 'Solace Residences',
+    city: 'Hyderabad',
+    location: 'Gopanapally',
+    builder: 'Solace Realty',
+    possession: 'Possession Jun 2029',
+    status: 'Under construction',
+    bhk: '2–3',
+    acres: '5.4',
+    homes: '390',
+    floors: '18',
+    towers: '3',
+    price: '₹98 L – 1.45 Cr',
+    rate: '₹8,300 / sq ft',
+    gallery: ['/design/project.jpeg', '/design/buyer-1.jpeg', '/design/garden.jpeg'],
+    configs: [
+      { bhk: 2, price: '98 L', size: '1,150 sq ft' },
+      { bhk: 3, price: '1.45 Cr', size: '1,550 sq ft' }
+    ]
+  },
+  {
+    id: 3,
+    slug: 'aparna',
+    name: 'Aparna Sowparnika Rhythm of Rain',
+    city: 'Hyderabad',
+    location: 'Gopanapally',
+    builder: 'Aparna Constructions',
+    possession: 'Possession Dec 2028',
+    status: 'Under construction',
+    bhk: '2-4',
+    acres: '16.5',
+    homes: '1,200',
+    floors: '26',
+    towers: '6',
+    price: '₹1.65 Cr - ₹3.67 Cr',
+    rate: '₹12,500 / sq ft',
+    gallery: ['/design/buyer-3.jpeg', '/design/clubhouse.jpeg', '/design/hero.jpeg'],
+    configs: [
+      { bhk: 2, price: '1.65 Cr', size: '1,320 sq ft' },
+      { bhk: 3, price: '2.45 Cr', size: '1,960 sq ft' },
+      { bhk: 4, price: '3.67 Cr', size: '2,950 sq ft' }
+    ]
+  },
+  {
+    id: 7,
+    slug: 'urbania',
+    name: 'Urbania Meadows',
+    city: 'Hyderabad',
+    location: 'Tellapur',
+    builder: 'Urbania Homes',
+    possession: 'Possession Dec 2029',
+    status: 'Under construction',
+    bhk: '2-3',
+    acres: '8.2',
+    homes: '620',
+    floors: '22',
+    towers: '4',
+    price: '₹1.05 Cr - ₹1.85 Cr',
+    rate: '₹8,200 / sq ft',
+    gallery: ['/design/entrance.jpeg', '/design/buyer-2.jpeg', '/design/garden.jpeg'],
+    configs: [
+      { bhk: 2, price: '1.05 Cr', size: '1,240 sq ft' },
+      { bhk: 3, price: '1.85 Cr', size: '1,820 sq ft' }
+    ]
+  }
 ];
-
-const PRICE_BANDS = [
-  { id: 'all', label: 'All Prices' },
-  { id: 'under_50l', label: 'Under ₹50 L', min: 0, max: 5000000 },
-  { id: '50l_to_1cr', label: '₹50 L - ₹1 Cr', min: 5000000, max: 10000000 },
-  { id: '1cr_to_2cr', label: '₹1 Cr - ₹2 Cr', min: 10000000, max: 20000000 },
-  { id: 'above_2cr', label: 'Above ₹2 Cr', min: 20000000, max: 999999999 }
-];
-
-const BHK_OPTIONS = ['All', '1 BHK', '2 BHK', '3 BHK', '4+ BHK'];
 
 export const DirectoryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated, role } = useAuth();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  // Filters state with auto-apply
   const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [locality, setLocality] = useState(searchParams.get('locality') || 'All');
-  const [propertyType, setPropertyType] = useState(searchParams.get('property_type') || 'All');
-  const [priceBand, setPriceBand] = useState(searchParams.get('price_band') || 'all');
-  const [bhk, setBhk] = useState(searchParams.get('bhk') || 'All');
-  const [constructionStatus, setConstructionStatus] = useState(searchParams.get('construction_status') || 'All');
-  const [sortBy, setSortBy] = useState(searchParams.get('sort_by') || 'newest');
+  const [localityFilter, setLocalityFilter] = useState(searchParams.get('locality') || 'All');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'ready' | 'under_construction'>('all');
+  const [bhkFilter, setBhkFilter] = useState<number | 'all'>('all');
+  const [sortBy, setSortBy] = useState<'relevance' | 'price-asc' | 'price-desc' | 'possession'>('relevance');
+  const [savedIds, setSavedIds] = useState<number[]>([1]);
+  const [activePhotoIdx, setActivePhotoIdx] = useState<Record<number, number>>({});
 
-  // Fetch properties from backend
-  const { data: properties, isLoading, isError } = useQuery({
-    queryKey: ['directory-properties', search, propertyType, sortBy, constructionStatus],
-    queryFn: () =>
-      propertyApi.getProperties({
-        search: search || undefined,
-        property_type: propertyType !== 'All' ? propertyType : undefined,
-        construction_status: constructionStatus !== 'All' ? constructionStatus : undefined,
-        sort_by: sortBy
-      })
-  });
-
-  // Wishlist query
-  const { data: wishlist } = useQuery({
-    queryKey: ['user-wishlist'],
-    queryFn: () => wishlistApi.getWishlist(),
-    enabled: isAuthenticated && role === 'buyer'
-  });
-
-  const wishlistMap = new Set(wishlist?.map((w) => w.property_id));
-
-  // Toggle wishlist mutation
-  const toggleWishlistMutation = useMutation({
-    mutationFn: async (propertyId: number) => {
-      if (wishlistMap.has(propertyId)) {
-        await wishlistApi.removeFromWishlist(propertyId);
-      } else {
-        await wishlistApi.addToWishlist(propertyId);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-wishlist'] });
-    }
-  });
-
-  // Client-side auto-filtering for rich criteria (Locality, Price Bands, BHK)
-  const filteredProperties = useMemo(() => {
-    if (!properties) return [];
-
-    return properties.filter((p) => {
-      // Locality filter
-      if (locality !== 'All') {
-        const matchesLoc = p.locality?.toLowerCase().includes(locality.toLowerCase()) ||
-          p.address?.toLowerCase().includes(locality.toLowerCase());
-        if (!matchesLoc) return false;
-      }
-
-      // Price band filter
-      if (priceBand !== 'all') {
-        const band = PRICE_BANDS.find((b) => b.id === priceBand);
-        if (band && band.min !== undefined && band.max !== undefined && p.total_price !== undefined && p.total_price !== null) {
-          if (p.total_price < band.min || p.total_price > band.max) return false;
-        }
-      }
-
-      // BHK filter
-      if (bhk !== 'All') {
-        const pDesc = `${p.name} ${p.description || ''} ${p.amenities?.join(' ') || ''}`.toLowerCase();
-        if (bhk === '1 BHK' && !pDesc.includes('1 bhk') && !pDesc.includes('1bhk')) return false;
-        if (bhk === '2 BHK' && !pDesc.includes('2 bhk') && !pDesc.includes('2bhk')) return false;
-        if (bhk === '3 BHK' && !pDesc.includes('3 bhk') && !pDesc.includes('3bhk')) return false;
-        if (bhk === '4+ BHK' && !pDesc.includes('4 bhk') && !pDesc.includes('4bhk') && !pDesc.includes('5 bhk')) return false;
-      }
-
-      return true;
-    });
-  }, [properties, locality, priceBand, bhk]);
-
-  const handleResetFilters = () => {
-    setSearch('');
-    setLocality('All');
-    setPropertyType('All');
-    setPriceBand('all');
-    setBhk('All');
-    setConstructionStatus('All');
-    setSortBy('newest');
-    setSearchParams({});
+  const toggleSave = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSavedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
   };
 
-  const hasActiveFilters =
-    search !== '' ||
-    locality !== 'All' ||
-    propertyType !== 'All' ||
-    priceBand !== 'all' ||
-    bhk !== 'All' ||
-    constructionStatus !== 'All' ||
-    sortBy !== 'newest';
+  const handlePhotoDot = (projectId: number, index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActivePhotoIdx(prev => ({ ...prev, [projectId]: index }));
+  };
+
+  const filteredProjects = useMemo(() => {
+    return PROJECTS_DATA.filter(project => {
+      if (search) {
+        const q = search.toLowerCase();
+        const matches =
+          project.name.toLowerCase().includes(q) ||
+          project.location.toLowerCase().includes(q) ||
+          project.builder.toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+      if (localityFilter !== 'All' && project.location.toLowerCase() !== localityFilter.toLowerCase()) {
+        return false;
+      }
+      if (statusFilter === 'ready' && project.status !== 'Ready to move') {
+        return false;
+      }
+      if (statusFilter === 'under_construction' && project.status !== 'Under construction') {
+        return false;
+      }
+      if (bhkFilter !== 'all') {
+        const hasBhk = project.configs.some(c => c.bhk === bhkFilter);
+        if (!hasBhk) return false;
+      }
+      return true;
+    }).sort((a, b) => {
+      if (sortBy === 'price-asc') {
+        const pA = a.id === 1 ? 1.12 : a.id === 4 ? 1.58 : a.id === 5 ? 1.52 : 0.98;
+        const pB = b.id === 1 ? 1.12 : b.id === 4 ? 1.58 : b.id === 5 ? 1.52 : 0.98;
+        return pA - pB;
+      }
+      if (sortBy === 'price-desc') {
+        const pA = a.id === 1 ? 1.62 : a.id === 4 ? 2.30 : a.id === 5 ? 2.65 : 1.45;
+        const pB = b.id === 1 ? 1.62 : b.id === 4 ? 2.30 : b.id === 5 ? 2.65 : 1.45;
+        return pB - pA;
+      }
+      return 0;
+    });
+  }, [search, localityFilter, statusFilter, bhkFilter, sortBy]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Property Directory</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Browse verified Hyderabad properties with stored cadastral coordinates and multi-source due diligence.
+    <main className="project-listing">
+      <h1>New projects in Hyderabad</h1>
+
+      {/* Filter Bar matching client portal */}
+      <div className="listing-filter-bar" aria-label="Project filters">
+        <button
+          type="button"
+          className={localityFilter !== 'All' ? 'active' : ''}
+          onClick={() => {
+            const locs = ['All', 'Gopanapally', 'Kokapet', 'Tellapur', 'Puppalaguda', 'Narsingi'];
+            const currentIdx = locs.indexOf(localityFilter);
+            const nextLoc = locs[(currentIdx + 1) % locs.length];
+            setLocalityFilter(nextLoc);
+          }}
+        >
+          <span>{localityFilter === 'All' ? 'Locality' : localityFilter}</span>
+          <ChevronDown size={14} />
+        </button>
+
+        <button
+          type="button"
+          className={bhkFilter !== 'all' ? 'active' : ''}
+          onClick={() => {
+            const bhks: (number | 'all')[] = ['all', 2, 3, 4];
+            const currentIdx = bhks.indexOf(bhkFilter);
+            const nextBhk = bhks[(currentIdx + 1) % bhks.length];
+            setBhkFilter(nextBhk);
+          }}
+        >
+          <span>{bhkFilter === 'all' ? 'Configuration' : `${bhkFilter} BHK`}</span>
+          <ChevronDown size={14} />
+        </button>
+
+        <div className="listing-status-filters">
+          <button
+            type="button"
+            className={statusFilter === 'ready' ? 'active' : ''}
+            aria-pressed={statusFilter === 'ready'}
+            onClick={() => setStatusFilter(prev => prev === 'ready' ? 'all' : 'ready')}
+          >
+            Ready to move
+          </button>
+          <button
+            type="button"
+            className={statusFilter === 'under_construction' ? 'active' : ''}
+            aria-pressed={statusFilter === 'under_construction'}
+            onClick={() => setStatusFilter(prev => prev === 'under_construction' ? 'all' : 'under_construction')}
+          >
+            Under construction
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className="listing-all-filters"
+          onClick={() => {
+            setLocalityFilter('All');
+            setStatusFilter('all');
+            setBhkFilter('all');
+            setSearch('');
+          }}
+        >
+          <SlidersHorizontal size={16} />
+          Reset filters
+        </button>
+      </div>
+
+      {/* Results Toolbar */}
+      <div className="listing-results-toolbar">
+        <div className="listing-results-summary">
+          <p role="status">
+            Showing {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
           </p>
+          {localityFilter !== 'All' && (
+            <button
+              className="listing-applied-filter"
+              onClick={() => setLocalityFilter('All')}
+            >
+              {localityFilter} ✕
+            </button>
+          )}
+          {statusFilter !== 'all' && (
+            <button
+              className="listing-applied-filter"
+              onClick={() => setStatusFilter('all')}
+            >
+              {statusFilter === 'ready' ? 'Ready to move' : 'Under construction'} ✕
+            </button>
+          )}
+          {bhkFilter !== 'all' && (
+            <button
+              className="listing-applied-filter"
+              onClick={() => setBhkFilter('all')}
+            >
+              {bhkFilter} BHK ✕
+            </button>
+          )}
         </div>
 
-        {/* Quick count badge */}
-        <div className="text-xs font-mono text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 self-start sm:self-auto shadow-2xs">
-          Showing <span className="font-bold text-slate-900">{filteredProperties.length}</span> of {properties?.length || 0} listings
+        <div className="listing-sort">
+          <select
+            className="bg-transparent text-xs font-semibold text-[#111111] border border-[#e6e6e6] rounded-md px-3 py-1.5 cursor-pointer focus:outline-none"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+          >
+            <option value="relevance">Sort: Relevance</option>
+            <option value="price-asc">Sort: Price low to high</option>
+            <option value="price-desc">Sort: Price high to low</option>
+            <option value="possession">Sort: Possession date</option>
+          </select>
         </div>
       </div>
 
-      {/* Rich Auto-Applying Filter Control Panel */}
-      <div className="bg-white p-5 rounded-xl border border-brand-border shadow-xs space-y-4">
-        {/* Row 1: Search, Property Type, Construction Status, Sort */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* 1. Global Search (Manual Locality / Area / Property Name) */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-3 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search any locality, area, address, or property..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-brand-primary transition-colors"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch('')}
-                className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <X size={13} />
-              </button>
-            )}
-          </div>
+      {/* Results Project Cards List */}
+      <div className="listing-results">
+        {filteredProjects.map((project) => {
+          const currentImgIdx = activePhotoIdx[project.id] || 0;
+          const currentImg = project.gallery[currentImgIdx] || project.gallery[0];
+          const isSaved = savedIds.includes(project.id);
 
-          {/* 2. Property Type */}
-          <div>
-            <select
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-brand-primary transition-colors cursor-pointer"
+          return (
+            <article
+              key={project.id}
+              className="listing-card cursor-pointer hover:border-[#10261a]/60 transition-colors"
+              onClick={() => navigate(`/properties/${project.id}`)}
             >
-              <option value="All">All Property Types</option>
-              <option value="apartment">Apartments</option>
-              <option value="villa">Villas</option>
-              <option value="residential_plot">Residential Plots</option>
-              <option value="agricultural_land">Agricultural Land</option>
-              <option value="commercial">Commercial</option>
-            </select>
-          </div>
-
-          {/* 3. Construction Status */}
-          <div>
-            <select
-              value={constructionStatus}
-              onChange={(e) => setConstructionStatus(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-brand-primary transition-colors cursor-pointer"
-            >
-              <option value="All">All Stages</option>
-              <option value="Ready to Move">Ready to Move</option>
-              <option value="Under Construction">Under Construction</option>
-            </select>
-          </div>
-
-          {/* 4. Sort By */}
-          <div>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:border-brand-primary transition-colors cursor-pointer"
-            >
-              <option value="newest">Sort: Newest Listings</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="area_asc">Size: Smallest First</option>
-              <option value="area_desc">Size: Largest First</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Row 2: Price Bands Chips & BHK Quick Select */}
-        <div className="pt-2 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-          {/* Price Range Pills */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[11px] font-mono text-slate-400 mr-1 flex items-center gap-0.5">
-              <IndianRupee size={12} />
-              <span>Budget:</span>
-            </span>
-            {PRICE_BANDS.map((band) => (
-              <button
-                key={band.id}
-                type="button"
-                onClick={() => setPriceBand(band.id)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                  priceBand === band.id
-                    ? 'bg-brand-primary text-white border-brand-primary shadow-2xs'
-                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                {band.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            {/* BHK Configuration Pills */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-mono text-slate-400 mr-1">BHK:</span>
-              {BHK_OPTIONS.map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setBhk(opt)}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    bhk === opt
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                  }`}
+              {/* Card Left: Gallery with Photo Dots */}
+              <div className="listing-card-gallery">
+                <Link
+                  to={`/properties/${project.id}`}
+                  aria-label={`View ${project.name}`}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {opt}
-                </button>
-              ))}
-            </div>
-
-            {/* Clear Filters Button */}
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                className="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 cursor-pointer"
-              >
-                <X size={12} />
-                <span>Reset All</span>
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Property Cards Grid */}
-      {isLoading ? (
-        <LoadingSpinner message="Querying property directory..." />
-      ) : isError ? (
-        <div className="p-8 text-center text-rose-600 bg-rose-50 border border-rose-200 rounded-lg text-sm">
-          Failed to load properties. Ensure the backend server is running.
-        </div>
-      ) : filteredProperties.length === 0 ? (
-        <EmptyState
-          icon={Building}
-          title="No Published Properties Found"
-          description="There are currently no published properties matching your selected filter criteria. Try adjusting your query."
-          actionLabel="Clear Filters"
-          onAction={handleResetFilters}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProperties.map((p) => {
-            const isWishlisted = wishlistMap.has(p.id);
-
-            // Context-aware link: if buyer is logged in, link to /buyer/properties/:id; if seller, /seller/properties/:id
-            const detailLink =
-              role === 'buyer'
-                ? `/buyer/properties/${p.id}`
-                : role === 'seller'
-                ? `/seller/properties/${p.id}`
-                : `/properties/${p.id}`;
-
-            return (
-              <div
-                key={p.id}
-                className="group bg-white rounded-xl border border-brand-border overflow-hidden hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  {/* Photo Container */}
-                  <div className="h-48 bg-slate-100 relative overflow-hidden">
-                    <img
-                      src={p.photos?.[0]?.url || '/assets/ramez_seapoint.jpg'}
-                      alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
+                  <img
+                    src={currentImg}
+                    alt={`${project.name}, project view`}
+                    loading="lazy"
+                  />
+                </Link>
+                <div className="listing-photo-dots" aria-label={`${project.name} photos`}>
+                  {project.gallery.map((img, dotIdx) => (
+                    <button
+                      key={img}
+                      type="button"
+                      className={currentImgIdx === dotIdx ? 'active' : ''}
+                      onClick={(e) => handlePhotoDot(project.id, dotIdx, e)}
+                      aria-label={`Show photo ${dotIdx + 1}`}
+                      aria-pressed={currentImgIdx === dotIdx}
                     />
-                    {/* Badges Overlay */}
-                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-                      {p.is_demo && <Badge variant="demo">Demo data</Badge>}
-                      <Badge variant="unverified">Seller provided</Badge>
-                      <Badge variant="published" className="capitalize">{p.property_type.replace('_', ' ')}</Badge>
-                    </div>
-
-                    {/* Wishlist Button (for authenticated buyers) */}
-                    {isAuthenticated && role === 'buyer' && (
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleWishlistMutation.mutate(p.id);
-                        }}
-                        className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-                          isWishlisted
-                            ? 'bg-rose-500 text-white shadow-xs'
-                            : 'bg-white/90 text-slate-600 hover:text-rose-500 hover:bg-white'
-                        }`}
-                        title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-                      >
-                        <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="p-4 space-y-3">
-                    <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-mono block">
-                        {p.locality}, {p.city || 'Hyderabad'}
-                      </span>
-                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-0.5">
-                        <Link to={detailLink}>{p.name}</Link>
-                      </h3>
-                      <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
-                        {p.description}
-                      </p>
-                    </div>
-
-                    {/* Price and Area specs */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase font-mono block">Asking Price</span>
-                        <span className="font-bold text-slate-900 text-sm font-mono">{p.asking_price}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-slate-400 uppercase font-mono block">Area</span>
-                        <span className="font-semibold text-slate-700 font-mono">{p.area} {p.area_unit}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer Action */}
-                <div className="p-4 pt-0 grid grid-cols-5 gap-2">
-                  <Link
-                    to={detailLink}
-                    className="col-span-3 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <span>View Details</span>
-                    <ArrowRight size={13} />
-                  </Link>
-                  <Link
-                    to={`/buyer/properties/${p.id}?tab=ai_assistant`}
-                    className="col-span-2 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 transition-colors"
-                    title="Ask AI Assistant about this property"
-                  >
-                    <Bot size={13} className="text-indigo-600" />
-                    <span>Ask AI</span>
-                  </Link>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+
+              {/* Card Right: Content */}
+              <div className="listing-card-content">
+                <div className="listing-card-title">
+                  <div>
+                    <p className="listing-locality">
+                      <MapPin size={15} />
+                      {project.location}, {project.city}
+                    </p>
+                    <h2>
+                      <Link to={`/properties/${project.id}`}>
+                        {project.name}
+                      </Link>
+                    </h2>
+                    <p className="listing-builder">
+                      <span>{project.builder[0]}</span>
+                      {project.builder}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="p-2 text-[#767676] hover:text-[#10261a] transition-colors"
+                    onClick={(e) => toggleSave(project.id, e)}
+                    aria-label={isSaved ? 'Remove from Saved' : 'Save project'}
+                  >
+                    <Bookmark
+                      size={20}
+                      fill={isSaved ? '#10261a' : 'none'}
+                      color={isSaved ? '#10261a' : 'currentColor'}
+                    />
+                  </button>
+                </div>
+
+                <div className="listing-card-price">
+                  <small>Price range</small>
+                  <strong>{project.price}</strong>
+                  <small>{project.rate}</small>
+                </div>
+
+                <dl className="listing-facts">
+                  <div>
+                    <dt>
+                      <Calendar size={14} /> Possession
+                    </dt>
+                    <dd>{project.possession.replace('Possession ', '')}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Layers size={14} /> Acres
+                    </dt>
+                    <dd>{project.acres}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Home size={14} /> Homes
+                    </dt>
+                    <dd>{project.homes}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Building2 size={14} /> Floors
+                    </dt>
+                    <dd>{project.floors}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Building2 size={14} /> Towers
+                    </dt>
+                    <dd>{project.towers}</dd>
+                  </div>
+                </dl>
+
+                <div className="listing-configs">
+                  <p>{project.configs.length} configurations</p>
+                  <div>
+                    {project.configs.map((c) => (
+                      <Link
+                        key={c.bhk}
+                        to={`/properties/${project.id}#units`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span>
+                          <Home size={14} />
+                          {c.bhk} BHK
+                        </span>
+                        <p>
+                          <small>from</small> <strong>₹{c.price}</strong>
+                        </p>
+                        <small>{c.size}</small>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </main>
   );
 };
