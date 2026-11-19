@@ -30,12 +30,21 @@
   background: #bfddc9;
 }
 
+@layer utilities {
+  .shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  .shadow-2xs {
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+  }
+}
+
 /* Custom interactive pill buttons */
 .pill-tab {
   @apply px-4 py-2 text-xs font-medium rounded-full transition-all duration-150 border cursor-pointer whitespace-nowrap;
 }
 .pill-tab-active {
-  @apply bg-brand-primary text-white border-brand-primary font-semibold shadow-xs;
+  @apply bg-brand-primary text-white border-brand-primary font-semibold shadow-sm;
 }
 .pill-tab-inactive {
   @apply bg-white text-brand-muted border-brand-border hover:border-brand-mint hover:text-brand-dark;
