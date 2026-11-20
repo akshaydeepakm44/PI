@@ -132,9 +132,20 @@ export const LandingPage: React.FC = () => {
             ))}
           </div>
 
-          <Link to="/directory" className="home-browse-link">
-            Browse all 7 projects <ArrowRight size={17} />
-          </Link>
+          <div className="flex flex-wrap items-center gap-4 mt-2">
+            <Link to="/directory" className="home-browse-link">
+              Browse all 7 projects <ArrowRight size={17} />
+            </Link>
+            <span className="text-[#d1d5db]">|</span>
+            <Link
+              to="/builder"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+            >
+              <Building2 size={14} className="text-emerald-700" />
+              <span>Builder Console</span>
+              <ArrowUpRight size={13} />
+            </Link>
+          </div>
         </div>
 
         {/* Hero Visual on Right with Floating Spotlight Card */}

@@ -8,7 +8,8 @@ import {
   User,
   LogOut,
   Moon,
-  Sun
+  Sun,
+  Building2
 } from 'lucide-react';
 
 export const PublicLayout: React.FC = () => {
@@ -43,6 +44,7 @@ export const PublicLayout: React.FC = () => {
 
   const isHome = location.pathname === '/';
   const isListings = location.pathname.startsWith('/directory') || location.pathname.startsWith('/projects');
+  const isBuilder = location.pathname.startsWith('/builder');
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfcfc] text-[#111111] antialiased font-sans">
@@ -72,6 +74,13 @@ export const PublicLayout: React.FC = () => {
             onClick={() => setMenuOpen(false)}
           >
             Listings
+          </Link>
+          <Link
+            to="/builder"
+            aria-current={isBuilder ? 'page' : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            Builder
           </Link>
         </nav>
 
@@ -120,6 +129,17 @@ export const PublicLayout: React.FC = () => {
               >
                 <Columns size={16} className="text-[#5c5c5c]" />
                 <span>Dashboard</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/builder');
+                }}
+              >
+                <Building2 size={16} className="text-[#5c5c5c]" />
+                <span>Builder Portal</span>
               </button>
 
               <button
@@ -209,13 +229,18 @@ export const PublicLayout: React.FC = () => {
             {/* Column 4: Company */}
             <div className="footer-column">
               <h3>Company</h3>
-              {['About us', 'Careers', 'Contact', 'Partner with us'].map((item) => (
+              {[
+                { name: 'About us', link: '/directory' },
+                { name: 'Careers', link: '/directory' },
+                { name: 'Contact', link: '/directory' },
+                { name: 'Partner with us (Builder)', link: '/builder' }
+              ].map(({ name, link }) => (
                 <button
-                  key={item}
+                  key={name}
                   type="button"
-                  onClick={() => navigate('/directory')}
+                  onClick={() => navigate(link)}
                 >
-                  {item}
+                  {name}
                 </button>
               ))}
             </div>
