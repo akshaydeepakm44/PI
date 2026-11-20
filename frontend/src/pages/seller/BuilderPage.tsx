@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Building2,
   Search,
-  Bell,
   ChevronDown,
   ChevronRight,
   Plus,
@@ -233,50 +232,6 @@ export const BuilderPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] text-[#111111] flex flex-col font-sans">
-      {/* ======================================================== */}
-      {/* TOP NAVBAR MATCHING IMAGES                               */}
-      {/* ======================================================== */}
-      <header className="w-full bg-white border-b border-[#dedede] h-16 px-6 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="font-heading text-2xl font-bold tracking-tight text-[#111111]">
-            Dashboard
-          </Link>
-
-          {/* Search bar matching Image 1 */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#f7f7f7] border border-[#e6e6e6] text-xs text-[#767676] w-64">
-            <Search size={15} />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent border-0 outline-none w-full text-xs text-[#111111]"
-            />
-          </div>
-        </div>
-
-        {/* Top Right User Profile Badge matching Image 1 */}
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            className="w-9 h-9 rounded-xl border border-[#dedede] flex items-center justify-center text-[#5c5c5c] hover:bg-[#f7f7f7] transition-colors relative"
-            aria-label="Notifications"
-          >
-            <Bell size={16} />
-            <span className="w-2 h-2 rounded-full bg-emerald-500 absolute top-2 right-2"></span>
-          </button>
-
-          <div className="flex items-center gap-2.5 pl-2 border-l border-[#eee]">
-            <span className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-              B
-            </span>
-            <div className="hidden md:block text-left text-xs">
-              <strong className="block text-[#111111] font-semibold leading-tight">builder@yopmail.com</strong>
-              <small className="text-[#767676] block text-[11px]">Developer</small>
-            </div>
-            <ChevronDown size={14} className="text-[#767676]" />
-          </div>
-        </div>
-      </header>
-
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-lg bg-[#10261a] text-white text-xs font-semibold shadow-lg border border-[#bfddc9] flex items-center gap-2 animate-bounce">
