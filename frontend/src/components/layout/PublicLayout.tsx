@@ -1,103 +1,251 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Search, ArrowRight, UserCheck, Shield, Building2, Compass, MapPin } from 'lucide-react';
+import {
+  Search,
+  ChevronDown,
+  Columns,
+  User,
+  LogOut,
+  Moon,
+  Sun
+} from 'lucide-react';
 
 export const PublicLayout: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/directory?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/directory');
+    }
+  };
+
+  const isHome = location.pathname === '/';
+  const isListings = location.pathname.startsWith('/directory') || location.pathname.startsWith('/projects');
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfcfc] text-[#111111] antialiased font-sans">
-      {/* Top Navbar matching the portal theme */}
-      <header className="w-full bg-[#ffffff]/90 backdrop-blur-md border-b border-[#eeeeee] sticky top-0 z-40 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
-          {/* Left: Brand + Navigation Links */}
-          <div className="flex items-center gap-10">
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <span className="w-8 h-8 rounded bg-[#10261a] text-[#8bcaa0] font-bold text-sm flex items-center justify-center font-heading">
-                H
-              </span>
-              <span className="font-heading text-2xl font-bold tracking-tight text-[#10261a] group-hover:text-[#1e6b3a] transition-colors">
-                HiiN
-              </span>
-            </Link>
+      {/* Top Navbar matching Image 1 (.portal-header) */}
+      <header className="portal-header">
+        {/* Brand Logo matching Image 1 */}
+        <Link
+          to="/"
+          className="portal-logo"
+          onClick={() => setMenuOpen(false)}
+        >
+          PORTAL
+        </Link>
 
-            <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-[#5c5c5c]">
-              <Link to="/" className="hover:text-[#111111] transition-colors font-semibold">Home</Link>
-              <Link to="/directory" className="hover:text-[#111111] transition-colors">Projects</Link>
-              <Link to="/compare" className="hover:text-[#111111] transition-colors">Compare</Link>
-              <Link to="/map" className="hover:text-[#111111] transition-colors">Map</Link>
-              <Link to="/commute" className="hover:text-[#111111] transition-colors">My Commute</Link>
-            </nav>
-          </div>
+        {/* Primary Navigation matching Image 1 */}
+        <nav className="portal-primary-nav" aria-label="Main navigation">
+          <Link
+            to="/"
+            aria-current={isHome ? 'page' : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            to="/directory"
+            aria-current={isListings ? 'page' : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            Listings
+          </Link>
+        </nav>
 
-          {/* Right: City Badge + Resident Profile Badge (No Login Wall) */}
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eef7f1] text-[#1e6b3a] text-xs font-semibold border border-[#8bcaa0]/40">
-              <MapPin size={12} />
-              <span>Hyderabad</span>
+        {/* Search Input in Top Bar matching Image 1 */}
+        <form className="header-search" role="search" onSubmit={handleSearchSubmit}>
+          <Search size={16} />
+          <input
+            aria-label="Search a project, locality, city or builder"
+            placeholder="Search a project, locality, city or builder"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
+
+        {/* User Account Trigger matching Image 1 & Dropdown matching Image 4 */}
+        <div className="header-actions" ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            type="button"
+            className="account-trigger cursor-pointer"
+            aria-label="User account menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className="account-avatar font-bold font-mono">
+              AR
             </span>
+            <span className="account-copy">
+              <strong>Ananya Rao</strong>
+              <small>ananya.rao@example.com</small>
+            </span>
+            <ChevronDown size={14} className="text-[#5c5c5c]" />
+          </button>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#dedede] text-xs shadow-xs">
-              <span className="w-6 h-6 rounded-full bg-[#10261a] text-[#8bcaa0] flex items-center justify-center font-bold text-[11px]">
-                {user?.full_name?.charAt(0) || 'A'}
-              </span>
-              <span className="font-semibold text-slate-800 hidden sm:inline">
-                {user?.full_name || 'Buyer'}
-              </span>
-              <span className="text-[10px] text-slate-400 font-mono hidden md:inline">
-                Resident
-              </span>
+          {/* User Profile Dropdown Menu matching Image 4 */}
+          {menuOpen && (
+            <div className="account-menu">
+              <strong>Ananya Rao</strong>
+              <small>ananya.rao@example.com</small>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/dashboard');
+                }}
+              >
+                <Columns size={16} className="text-[#5c5c5c]" />
+                <span>Dashboard</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/dashboard?tab=settings');
+                }}
+              >
+                <User size={16} className="text-[#5c5c5c]" />
+                <span>Account</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/');
+                }}
+              >
+                <LogOut size={16} className="text-[#5c5c5c]" />
+                <span>Sign out</span>
+              </button>
             </div>
-          </div>
+          )}
         </div>
       </header>
 
-      {/* Main Page Outlet */}
+      {/* Main Page Content */}
       <main className="flex-1">
         <Outlet />
       </main>
 
-      {/* Footer matching modern clean editorial aesthetic */}
-      <footer id="about" className="bg-[#f7f7f7] border-t border-[#dedede] py-12 px-4 sm:px-8 text-xs text-slate-600">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-2 space-y-3">
-            <span className="font-serif text-2xl font-bold tracking-tight text-[#10261a] block">HiiN</span>
-            <p className="max-w-md text-xs text-slate-500 leading-relaxed">
-              An AI-assisted property intelligence and due-diligence directory for Hyderabad. Connecting buyers, investors and developers with verified coordinates, authentic OpenStreetMap amenities, OSRM drive times, and CPCB atmospheric telemetry.
-            </p>
-            <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono pt-2">
-              <span>OSM Nominatim</span> • <span>Overpass API</span> • <span>CPCB & Open-Meteo AQI</span> • <span>Project OSRM</span>
+      {/* Footer matching Image 2 (.site-footer .portal-footer) */}
+      <footer className="site-footer portal-footer">
+        <div className="footer-inner">
+          <div className="footer-grid">
+            {/* Column 1: Brand Line */}
+            <div className="footer-brand">
+              <div className="footer-brand-line flex items-center justify-between">
+                <h3>PORTAL</h3>
+                <button
+                  type="button"
+                  className="footer-theme-mobile cursor-pointer p-1 text-[#767676] hover:text-[#111111]"
+                  aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                >
+                  {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+              </div>
+              <p>Homes in Hyderabad, with the details that matter before you visit.</p>
+            </div>
+
+            {/* Column 2: Explore */}
+            <div className="footer-column">
+              <h3>Explore</h3>
+              {['Buy', 'Rent', 'New projects', 'Commercial'].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => navigate('/directory')}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            {/* Column 3: Tools */}
+            <div className="footer-column">
+              <h3>Tools</h3>
+              {[
+                { name: 'My Commute', link: '/dashboard?tab=commute' },
+                { name: 'Compare', link: '/dashboard?tab=comparison' },
+                { name: 'Home loan calculator', link: '/directory' },
+                { name: 'Saved searches', link: '/dashboard' }
+              ].map(({ name, link }) => (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => navigate(link)}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+
+            {/* Column 4: Company */}
+            <div className="footer-column">
+              <h3>Company</h3>
+              {['About us', 'Careers', 'Contact', 'Partner with us'].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => navigate('/directory')}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            {/* Column 5: Help & Theme Toggle */}
+            <div className="footer-column relative">
+              <button
+                type="button"
+                className="footer-theme-toggle footer-theme-desktop absolute top-0 right-0 p-1 text-[#767676] hover:text-[#111111] cursor-pointer"
+                aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                onClick={() => setIsDarkMode(!isDarkMode)}
+              >
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+              <h3>Help</h3>
+              {['FAQs', 'RERA guide', 'Report a listing', 'Privacy'].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => navigate('/directory')}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div>
-            <h4 className="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider font-mono">Platform</h4>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/directory" className="hover:text-black">All Projects</Link></li>
-              <li><Link to="/map" className="hover:text-black">Map-First Explorer</Link></li>
-              <li><Link to="/compare" className="hover:text-black">Compare Properties</Link></li>
-              <li><Link to="/properties/1" className="hover:text-black">Ramky Kingston Park Orbit</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider font-mono">Platform Tools</h4>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/commute" className="hover:text-black flex items-center gap-1.5"><Compass size={12} className="text-slate-400" /><span>My Commute Calculator</span></Link></li>
-              <li><Link to="/seller" className="hover:text-black flex items-center gap-1.5"><Building2 size={12} className="text-slate-400" /><span>Developer Console</span></Link></li>
-              <li><Link to="/admin" className="hover:text-black flex items-center gap-1.5"><Shield size={12} className="text-slate-400" /><span>Telemetry & Pipeline Admin</span></Link></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-[#dedede] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
-          <p>© 2026 HiiN Property Intelligence Platform. Built for authentic real-world due diligence.</p>
-          <div className="flex items-center gap-4">
-            <Link to="/directory" className="hover:text-slate-600">Directory</Link>
-            <Link to="/compare" className="hover:text-slate-600">Compare</Link>
+          {/* Footer Bottom copyright */}
+          <div className="footer-bottom">
+            <p>© 2026 Portal · All rights reserved</p>
           </div>
         </div>
       </footer>

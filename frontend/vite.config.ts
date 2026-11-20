@@ -21,10 +21,6 @@ export default defineConfig({
       '/uploads': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true
-      },
-      '/assets': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true
       }
     }
   }

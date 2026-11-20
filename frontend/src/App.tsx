@@ -16,6 +16,7 @@ import { RegisterPage } from './pages/public/RegisterPage';
 // Buyer Pages
 import { PropertyDetailPage } from './pages/buyer/PropertyDetailPage';
 import { WishlistPage } from './pages/buyer/WishlistPage';
+import { DashboardPage } from './pages/buyer/DashboardPage';
 import { ComparePropertiesPage } from './pages/buyer/ComparePropertiesPage';
 import { MyCommutePage } from './pages/buyer/MyCommutePage';
 import { BuyerEnquiriesPage } from './pages/buyer/BuyerEnquiriesPage';
@@ -69,6 +70,14 @@ export const App: React.FC = () => {
               <Route path="/map" element={<InteractiveMapPage />} />
               <Route path="/commute" element={<MyCommutePage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/dashboard/projects" element={<DashboardPage initialTab="projects" />} />
+              <Route path="/dashboard/units" element={<DashboardPage initialTab="units" />} />
+              <Route path="/dashboard/comparison" element={<DashboardPage initialTab="comparison" />} />
+              <Route path="/dashboard/commute" element={<DashboardPage initialTab="commute" />} />
+              <Route path="/dashboard/settings" element={<DashboardPage initialTab="settings" />} />
+              <Route path="/shortlists" element={<DashboardPage initialTab="projects" />} />
+              <Route path="/buyer" element={<DashboardPage initialTab="projects" />} />
               <Route path="/assistant" element={<AIAssistantPage />} />
               <Route path="/login" element={<Navigate to="/" replace />} />
               <Route path="/register" element={<Navigate to="/" replace />} />

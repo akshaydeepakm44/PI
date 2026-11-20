@@ -6,8 +6,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Bookmark,
-  SlidersHorizontal,
-  Compass,
+  Columns,
+  Route,
   Sparkles,
   ShieldCheck,
   Building2,
@@ -211,19 +211,19 @@ export const LandingPage: React.FC = () => {
             icon: Bookmark,
             title: 'Keep your favourites',
             desc: 'Save the projects and unit plans you want to come back to.',
-            link: '/directory'
+            link: '/dashboard'
           },
           {
-            icon: SlidersHorizontal,
+            icon: Columns,
             title: 'See the whole picture',
             desc: 'Compare prices, spaces and neighbourhoods side by side.',
-            link: '/compare'
+            link: '/dashboard?tab=comparison'
           },
           {
-            icon: Compass,
+            icon: Route,
             title: 'Picture your everyday',
             desc: 'Keep work, school and your favourite places in the picture.',
-            link: '/commute'
+            link: '/dashboard?tab=commute'
           }
         ].map(({ icon: Icon, title, desc, link }) => (
           <Link key={title} to={link} className="hover:border-[#10261a] transition-colors">
