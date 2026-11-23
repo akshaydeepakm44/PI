@@ -291,19 +291,17 @@ export const PropertyDetailPage: React.FC = () => {
     }
     if (selectedUnitBhk === 'all') return UNITS_DATA;
     return UNITS_DATA.filter(u => u.bhk === selectedUnitBhk);
-  }, [selectedUnitBhk]);
-}, [selectedUnitBhk, property]);
+  }, [selectedUnitBhk, property]);
 
-const filteredAmenities = useMemo(() => {
-  let list = AMENITIES_DATA;
-  if (amenityFilter !== 'All') {
-    list = list.filter(a => a.type === amenityFilter);
-  }
-  return viewAllAmenities ? list : list.slice(0, 8);
-}, [amenityFilter, viewAllAmenities]);
+  const filteredAmenities = useMemo(() => {
+    let list = AMENITIES_DATA;
+    if (amenityFilter !== 'All') {
+      list = list.filter(a => a.type === amenityFilter);
+    }
+    return viewAllAmenities ? list : list.slice(0, 8);
+  }, [amenityFilter, viewAllAmenities]);
 
-const displayedPlaces = PLACES_DATA[selectedCategory] || PLACES_DATA['All'];
-const displayedPlaces: [string, string, string][] = (property?.modules_data?.neighbourhood_places?.[selectedCategory] as [string, string, string][]) || PLACES_DATA[selectedCategory] || PLACES_DATA['All'];
+  const displayedPlaces: [string, string, string][] = (property?.modules_data?.neighbourhood_places?.[selectedCategory] as [string, string, string][]) || PLACES_DATA[selectedCategory] || PLACES_DATA['All'];
 
 // Dynamic fields with fallback to Property 1 defaults
 const projectName = property?.name || 'Ramky Kingston Park Orbit';
@@ -340,16 +338,13 @@ return (
           </Link>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-3xl font-heading font-bold tracking-tight text-[#111111]">
-              Ramky Kingston Park Orbit
               {projectName}
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef7f1] text-[#1e6b3a] border border-[#bfddc9]">
-              RERA P02400005821
               {projectRera}
             </span>
           </div>
           <p className="text-xs text-[#5c5c5c] mt-1">
-            Gopanapally, Hyderabad · by Ramky Estates
             {projectLocality}
           </p>
         </div>
@@ -377,8 +372,6 @@ return (
       {/* Top Gallery Banner matching client portal */}
       <div className="hero">
         <img
-          src="/design/hero.jpeg"
-          alt="Ramky Kingston Park Orbit — project view"
           src={heroPhoto}
           alt={`${projectName} — project view`}
         />
@@ -387,7 +380,6 @@ return (
           className="button button--secondary button--compact image-action"
           onClick={() => setGalleryModalOpen(true)}
         >
-          <span>View all 4 images</span>
           <span>View all images</span>
         </button>
       </div>
@@ -396,24 +388,17 @@ return (
       <div className="key-facts">
         <div className="key-fact">
           <p><Award size={18} /> Price range</p>
-          <strong>₹1.12 – 1.62 Cr</strong>
-          <small>Base: ₹8,600+ / sq ft</small>
           <strong>{projectPrice}</strong>
           <small>Starting price</small>
         </div>
 
         <div className="key-fact status-fact">
           <p><Calendar size={18} /> Status</p>
-          <strong>Under construction</strong>
-          <small>Possession Jun 2027</small>
           <strong>{projectStatus}</strong>
           <small>{projectPossession}</small>
         </div>
 
         <div className="key-fact">
-          <p><Layers size={18} /> Acres</p>
-          <strong>16.5</strong>
-          <small>68% green cover</small>
           <p><Layers size={18} /> Acres / Area</p>
           <strong>{projectAcres}</strong>
           <small>Total footprint</small>
@@ -421,24 +406,18 @@ return (
 
         <div className="key-fact">
           <p><Home size={18} /> Units</p>
-          <strong>1,406</strong>
-          <small>Premium residences</small>
           <strong>{projectUnits}</strong>
           <small>Total homes</small>
         </div>
 
         <div className="key-fact">
           <p><Building2 size={18} /> Floors (tallest)</p>
-          <strong>24</strong>
-          <small>Panoramic views</small>
           <strong>{projectFloors}</strong>
           <small>Levels</small>
         </div>
 
         <div className="key-fact">
           <p><Building2 size={18} /> Towers</p>
-          <strong>6</strong>
-          <small>Towers A through F</small>
           <strong>{projectTowers}</strong>
           <small>Blocks / Wings</small>
         </div>
@@ -497,24 +476,21 @@ return (
           {/* Place Cards Grid */}
           <div className="place-cards">
             {displayedPlaces.map(([name, subtitle, distance]) => (
-              {
-                displayedPlaces.map(([name, subtitle, distance]: [string, string, string]) => (
-                  <article key={name} className="place-card">
-                    <div className="place-copy">
-                      <h3 title={name}>{name}</h3>
-                      <p>{subtitle}</p>
-                    </div>
-                    <div className="distance">
-                      <div>
-                        <strong>{distance}</strong>
-                        <span>km</span>
-                      </div>
-                      <small>from project</small>
-                    </div>
-                  </article>
-                ))
-              }
-            </div>
+              <article key={name} className="place-card">
+                <div className="place-copy">
+                  <h3 title={name}>{name}</h3>
+                  <p>{subtitle}</p>
+                </div>
+                <div className="distance">
+                  <div>
+                    <strong>{distance}</strong>
+                    <span>km</span>
+                  </div>
+                  <small>from project</small>
+                </div>
+              </article>
+            ))}
+          </div>
 
           <SectionAIAnalysis
             propertyId={propertyId}
