@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -55,11 +55,22 @@ const RoleGuard: React.FC<{ allowedRoles?: string[]; children: React.ReactNode }
   return <>{children}</>;
 };
 
+const ScrollToTop: React.FC = () => {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+  return null;
+};
+
 export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* --- Public / Main Portal Routes (Zero Login Wall) --- */}
             <Route element={<PublicLayout />}>
@@ -83,8 +94,8 @@ export const App: React.FC = () => {
               <Route path="/builder" element={<BuilderPage />} />
               <Route path="/builder/create" element={<BuilderPage />} />
               <Route path="/seller/create" element={<BuilderPage />} />
-              <Route path="/login" element={<Navigate to="/" replace />} />
-              <Route path="/register" element={<Navigate to="/" replace />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Route>
 
             {/* --- Authenticated App Layout Routes --- */}

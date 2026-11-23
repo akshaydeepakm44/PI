@@ -1,8 +1,12 @@
+import os
 import httpx
 import time
 import json
 
-headers = {"Authorization": "Bearer sk-datai2i-a100-qwen35-27b-8x3f9z"}
+api_key = os.getenv("AI_API_KEY", "")
+base_url = os.getenv("AI_BASE_URL", "http://127.0.0.1:8000/v1")
+
+headers = {"Authorization": f"Bearer {api_key}"}
 payload = {
     "model": "current-model",
     "messages": [
@@ -14,6 +18,6 @@ payload = {
 }
 
 t0 = time.time()
-res = httpx.post("http://115.244.46.68:8000/v1/chat/completions", headers=headers, json=payload, timeout=30.0)
+res = httpx.post(f"{base_url}/chat/completions", headers=headers, json=payload, timeout=30.0)
 print("Status:", res.status_code, "Duration:", round(time.time() - t0, 2), "s")
 print("Response:", res.json()["choices"][0]["message"]["content"])

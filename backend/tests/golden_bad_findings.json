@@ -1,0 +1,106 @@
+[
+  {
+    "id": "pricing_1_flawed",
+    "module": "pricing",
+    "finding": {
+      "claim": "The builder's documentation lists two conflicting floor rise rates, ₹25.00 and ₹50.00 per sq ft, which creates a price difference of ₹260,000 for the 12th-floor unit.",
+      "why_it_follows": "The data gap registry identifies a conflict where the floor rise rate is listed as ₹50.00 in additional charges and ₹25.00 in the pricing breakdown. Assuming the ₹25.00 rate, the calculated floor rise total for the 12th-floor unit is ₹260,000. Assuming the ₹50.00 rate, the calculated floor rise total is ₹520,000. The difference between these two scenario totals is ₹260,000.",
+      "what_it_changes": "This discrepancy directly impacts the final invoice amount. A buyer must confirm which rate is contractually binding before signing, as the difference represents a substantial sum that could affect loan eligibility or negotiation leverage.",
+      "flip_condition": "The builder provides a signed addendum or updated price sheet that explicitly cancels one of the rates and confirms the other as the sole applicable charge.",
+      "assumptions_used": ["scenario_floor_rise_rate_25", "scenario_floor_rise_rate_50"],
+      "kind": "finding"
+    },
+    "flaw_description": "Contains 'must', 'substantial', and speculative consequences 'loan eligibility' / 'negotiation leverage'"
+  },
+  {
+    "id": "pricing_2_flawed",
+    "module": "pricing",
+    "finding": {
+      "claim": "The 'Floor Rise Waiver till 31 Dec' offer is worth 20 times more on the 24th floor than on the 5th floor, with savings ranging from ₹32,500 to ₹650,000 depending on the applicable rate.",
+      "why_it_follows": "Assuming the ₹25.00 per sq ft rate, the waiver saves ₹32,500 on floor 5 and ₹650,000 on floor 24. The calculated ratio of the maximum saving to the minimum saving is 20.0. Under the conflicting ₹50.00 per sq ft rate, the savings are ₹65,000 and ₹1,300,000 respectively, maintaining the same 20.0 ratio. This indicates the waiver's value scales linearly with floor height.",
+      "what_it_changes": "Buyers on higher floors gain substantially greater monetary savings from the waiver. This makes the offer disproportionately valuable for upper-floor units, potentially influencing which floor a buyer selects if they intend to book before the 31 Dec deadline.",
+      "flip_condition": "The builder clarifies that the waiver applies as a flat fixed amount per unit regardless of floor, or that the floor rise rate is zero for all floors.",
+      "assumptions_used": ["scenario_floor_rise_rate_25", "scenario_floor_rise_rate_50"],
+      "kind": "finding"
+    },
+    "flaw_description": "Uses subjective qualifiers 'disproportionately' / 'substantially' and suggests choosing floor by waiver"
+  },
+  {
+    "id": "pricing_3_flawed",
+    "module": "pricing",
+    "finding": {
+      "claim": "The effective carpet area rate is ₹12,486.06 per sq ft, which is higher than the headline SBA rate of ₹8,615.38 per sq ft due to a 31.0% common area share.",
+      "why_it_follows": "For the 2 BHK Premium unit, the price is ₹11,200,000 for 1,300 sq ft SBA, resulting in a headline rate of ₹8,615.38 per sq ft. The carpet area is 897 sq ft, resulting in a carpet rate of ₹12,486.06 per sq ft. The common area is 403 sq ft, which is 31.0% of the total SBA. The difference between the carpet rate and SBA rate is driven entirely by this 31.0% non-usable area.",
+      "what_it_changes": "Buyers comparing properties based on SBA rates may underestimate the cost per usable square foot. Understanding that 31.0% of the paid area is common space helps in accurately comparing the value of usable living space against other projects.",
+      "flip_condition": "The builder provides a revised carpet area measurement that significantly increases the usable square footage, thereby lowering the effective carpet rate.",
+      "assumptions_used": [],
+      "kind": "finding"
+    },
+    "flaw_description": "Uses subjective 'significantly' in flip, mislabels balcony (104 sq ft) as non-usable common area"
+  },
+  {
+    "id": "master_plan_1_flawed",
+    "module": "master_plan",
+    "finding": {
+      "claim": "The master plan's internal arithmetic reveals a 34-unit discrepancy between the sum of individual tower counts and the theoretical capacity derived from floor counts and declared units per floor.",
+      "why_it_follows": "The sum of units across all six towers is 1,406, which matches the declared total. However, multiplying the 24 floors by the declared 10 units per floor for each tower yields a theoretical capacity of 1,440 units (24 floors × 10 units × 6 towers). The difference is 1,440 - 1,406 = 34 units. This suggests that the '10 units per floor' declaration may refer to a different configuration or that 34 units are excluded from the floor count, as the actual average is 9.75 to 9.79 units per floor.",
+      "what_it_changes": "Buyers should clarify with the builder whether the '10 units per floor' marketing figure is accurate for their specific tower or if it represents a maximum capacity that is not fully utilized. This affects understanding of neighbor density and potential future unit additions or reconfigurations.",
+      "flip_condition": "The builder provides a floor plan or legal document confirming that 10 units per floor is the correct count for all residential floors, and explains the 34-unit gap as non-residential spaces or a data entry error in the tower-specific counts.",
+      "assumptions_used": [],
+      "kind": "finding"
+    },
+    "flaw_description": "Contains 'should' and speculates on 'future unit additions or reconfigurations'"
+  },
+  {
+    "id": "master_plan_2_flawed",
+    "module": "master_plan",
+    "finding": {
+      "claim": "Each passenger lift in the towers serves approximately 78 homes, a density that may influence wait times during peak hours.",
+      "why_it_follows": "With 234 to 235 units per tower and 3 passenger lifts, the calculation yields 78.0 to 78.33 homes per lift. For example, Tower 1 has 234 units / 3 lifts = 78.0 homes per lift. This ratio is consistent across all towers, indicating a uniform lift-to-home ratio of roughly 1:78.",
+      "what_it_changes": "Buyers should ask the builder about the lift speed and cab capacity to assess whether 78 homes per lift is manageable for daily commuting and guest traffic. Higher speeds or larger cabs can mitigate wait times.",
+      "flip_condition": "The builder confirms that the lifts are high-speed and have large cab capacities, making the 78 homes per lift ratio efficient for the building's height and occupancy.",
+      "assumptions_used": [],
+      "kind": "finding"
+    },
+    "flaw_description": "Infers 'wait times' without speed/capacity figures in packet and uses 'should'"
+  },
+  {
+    "id": "master_plan_3_flawed",
+    "module": "master_plan",
+    "finding": {
+      "claim": "The required parking footprint for the entire community occupies 63.2% of the site area per level, assuming one parking slot per home.",
+      "why_it_follows": "Assuming 1.0 parking slot per home and 30.0 sq m per slot, the total parking area is 1,406 homes × 1.0 slot/home × 30.0 sq m/slot = 42,180 sq m. The site area is 66,773.13 sq m (16.5 acres). The share is 42,180 / 66,773.13 = 63.2%.",
+      "what_it_changes": "This high percentage indicates that a substantial portion of the site is dedicated to parking infrastructure. Buyers should inquire about the number of basement levels and whether visitor parking is included in this calculation, as it affects the availability of green space and outdoor amenities.",
+      "flip_condition": "The builder provides a site plan showing that the parking is distributed across multiple basement levels, reducing the per-level footprint, or confirms that the 30.0 sq m per slot assumption is conservative and actual usage is lower.",
+      "assumptions_used": ["cars_per_home", "sqm_per_parking_slot"],
+      "kind": "finding"
+    },
+    "flaw_description": "Uses 'high percentage', 'substantial', 'should', and claims underground parking affects 'green space and outdoor amenities'"
+  },
+  {
+    "id": "commute_3_flawed",
+    "module": "commute",
+    "finding": {
+      "claim": "Annual commute hours to Indian School of Business (ISB) are 183.3 hours, matching the DLF Cyber City figure despite a longer distance.",
+      "why_it_follows": "Assuming 2 trips per day and 220 academic days per year for this higher education institution, the 25.0-minute one-way trip to ISB results in 183.3 annual hours, which is identical to the 183.3 hours calculated for DLF Cyber City.",
+      "what_it_changes": "For buyers considering ISB as a workplace or study destination, the annual time commitment is equivalent to the DLF Cyber City commute, despite the different destination type.",
+      "flip_condition": "The 220-day academic calendar or 2-trip daily frequency does not reflect the actual schedule of the buyer.",
+      "assumptions_used": ["trips_per_work_day", "college_days_per_year"],
+      "kind": "finding"
+    },
+    "flaw_description": "Coincidental comparison matching DLF Cyber City figure and generic schedule flip condition"
+  },
+  {
+    "id": "amenities_2_flawed",
+    "module": "amenities",
+    "finding": {
+      "claim": "The swimming pool is located on the podium outdoors, not inside the clubhouse, which affects its accessibility and climate exposure.",
+      "why_it_follows": "The data explicitly states the swimming pool is a podium outdoor amenity, distinct from the 7 clubhouse amenities. This placement means the pool is subject to weather conditions and is not part of the 40,000 sq ft indoor clubhouse area.",
+      "what_it_changes": "Buyers should consider the seasonal usability of the pool and the convenience of moving between the podium and the clubhouse for other amenities. It also means the pool does not contribute to the indoor square footage per home calculation.",
+      "flip_condition": "The builder confirms that the swimming pool is actually located within the enclosed clubhouse structure, which would change the indoor amenity allocation and climate exposure.",
+      "assumptions_used": [],
+      "kind": "finding"
+    },
+    "flaw_description": "Restates brochure field / location with zero derived numbers and uses 'should'"
+  }
+]

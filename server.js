@@ -25,9 +25,9 @@ if (fs.existsSync(envPath)) {
 }
 
 const PORT = parseInt(process.env.PORT || env.PORT || '8080', 10);
-const AI_BASE_URL = process.env.AI_BASE_URL || env.AI_BASE_URL || 'http://115.244.46.68:8000/v1';
+const AI_BASE_URL = process.env.AI_BASE_URL || env.AI_BASE_URL || 'http://localhost:8000/v1';
 const AI_MODEL = process.env.AI_MODEL || env.AI_MODEL || 'current-model';
-const AI_API_KEY = process.env.AI_API_KEY || env.AI_API_KEY || 'sk-datai2i-a100-qwen35-27b-8x3f9z';
+const AI_API_KEY = process.env.AI_API_KEY || '';
 
 // Haversine formula with 1.28x road curvature factor
 function computeDistanceKm(lat1, lon1, lat2, lon2) {

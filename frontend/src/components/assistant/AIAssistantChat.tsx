@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Property, BuyerPreferences } from '../../types';
 import { Badge } from '../common/Badge';
+import { featureIntelligenceApi } from '../../services/api';
 import {
   ChatMessage,
   EvidenceSourceType,
@@ -36,19 +37,27 @@ interface AIAssistantChatProps {
   buyerPreferences?: BuyerPreferences | null;
   onClose?: () => void;
   isCompact?: boolean;
+  initialContext?: string;
 }
 
 export const AIAssistantChat: React.FC<AIAssistantChatProps> = ({
   property,
   buyerPreferences,
   onClose,
-  isCompact = false
+  isCompact = false,
+  initialContext
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => getInitialDemoMessages(property));
-  const [inputQuery, setInputQuery] = useState('');
+  const [inputQuery, setInputQuery] = useState(initialContext || '');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (initialContext) {
+      setInputQuery(initialContext);
+    }
+  }, [initialContext]);
 
   // Auto-scroll to bottom of chat when new messages or typing state changes
   useEffect(() => {
@@ -72,10 +81,31 @@ export const AIAssistantChat: React.FC<AIAssistantChatProps> = ({
     setIsTyping(true);
 
     try {
-      const assistantResponse = await simulateAssistantResponse(textToSend, property, buyerPreferences);
-      setMessages((prev) => [...prev, assistantResponse]);
-    } catch (err) {
-      console.error('Error simulating assistant response:', err);
+      if (property?.id) {
+        const res = await featureIntelligenceApi.askFeatureFollowup(property.id, {
+          module: 'all',
+          finding_claim: initialContext || '',
+          question: textToSend
+        });
+        const assistantResponse: ChatMessage = {
+          id: `asst-${Date.now()}`,
+          sender: 'assistant',
+          text: res.answer,
+          timestamp: getCurrentTimeFormatted(),
+          sources: res.source === 'llm'
+            ? ['Seller-provided information', 'Sample calculation']
+            : ['Sample calculation', 'Property listing'],
+          notVerifiedNotice: false
+        };
+        setMessages((prev) => [...prev, assistantResponse]);
+      } else {
+        const assistantResponse = await simulateAssistantResponse(textToSend, property, buyerPreferences);
+        setMessages((prev) => [...prev, assistantResponse]);
+      }
+    } catch (err: any) {
+      console.warn('Real agent follow-up failed, using fallback:', err);
+      const fallbackResponse = await simulateAssistantResponse(textToSend, property, buyerPreferences);
+      setMessages((prev) => [...prev, fallbackResponse]);
     } finally {
       setIsTyping(false);
       inputRef.current?.focus();

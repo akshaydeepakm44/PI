@@ -254,6 +254,33 @@ export const routingApi = {
 };
 
 
+// --- FEATURE INTELLIGENCE SERVICES (4-MOVES EVIDENCE LAYER) ---
+export const featureIntelligenceApi = {
+  getFeatureIntelligence: async (
+    propertyId: number,
+    module: string,
+    refresh = false,
+    simulateUnavailable = false
+  ): Promise<any> => {
+    const res = await api.get(`/properties/${propertyId}/feature-intelligence`, {
+      params: { module, refresh, simulate_unavailable: simulateUnavailable }
+    });
+    return res.data;
+  },
+  askFeatureFollowup: async (
+    propertyId: number,
+    payload: {
+      module: string;
+      finding_claim: string;
+      question: string;
+      finding_id?: string;
+    }
+  ): Promise<{ answer: string; source: string; property_id: number; module: string }> => {
+    const res = await api.post(`/properties/${propertyId}/feature-intelligence/followup`, payload);
+    return res.data;
+  }
+};
+
 // --- UPLOAD SERVICES ---
 export const uploadApi = {
   uploadPhoto: async (file: File): Promise<{ url: string; filename: string }> => {

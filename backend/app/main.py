@@ -14,7 +14,8 @@ from app.routers import (
     intelligence,
     geocoding,
     routing,
-    uploads
+    uploads,
+    feature_intelligence
 )
 
 # Initialize database schema tables
@@ -63,6 +64,8 @@ app.include_router(intelligence.router, prefix=settings.API_V1_PREFIX)
 app.include_router(geocoding.router, prefix=settings.API_V1_PREFIX)
 app.include_router(routing.router, prefix=settings.API_V1_PREFIX)
 app.include_router(uploads.router, prefix=settings.API_V1_PREFIX)
+app.include_router(feature_intelligence.router, prefix=settings.API_V1_PREFIX)
+app.include_router(feature_intelligence.router, prefix="/api/v1")
 
 @app.get("/api/health")
 def health_check():

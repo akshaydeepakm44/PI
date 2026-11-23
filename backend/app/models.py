@@ -248,3 +248,37 @@ class PropertyIntelligenceReport(Base):
     property = relationship("Property", back_populates="intelligence_reports")
     buyer = relationship("User")
 
+
+class FeatureIntelligenceCacheEntry(Base):
+    __tablename__ = "feature_intelligence_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cache_key = Column(String(255), unique=True, index=True, nullable=False)
+    property_id = Column(Integer, ForeignKey("properties.id", ondelete="CASCADE"), index=True, nullable=False)
+    module = Column(String(50), index=True, nullable=False)
+    packet_hash = Column(String(64), nullable=False)
+    packet_json = Column(JSON, nullable=False)
+    response_json = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+
+    property = relationship("Property")
+
+
+class FeatureIntelligenceJob(Base):
+    __tablename__ = "feature_intelligence_jobs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    job_id = Column(String(100), unique=True, index=True, nullable=False)
+    property_id = Column(Integer, ForeignKey("properties.id", ondelete="CASCADE"), index=True, nullable=False)
+    status = Column(String(50), default="pending", index=True, nullable=False)  # pending, running, completed, failed
+    modules = Column(JSON, nullable=False)
+    results = Column(JSON, nullable=True)
+    error = Column(Text, nullable=True)
+    started_at = Column(DateTime, default=datetime.datetime.utcnow)
+    finished_at = Column(DateTime, nullable=True)
+
+    property = relationship("Property")
+
+
+

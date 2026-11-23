@@ -6,6 +6,7 @@ from app.database import get_db
 from app import models, schemas
 from app.auth import get_current_user, require_role, get_current_user_optional
 from app.services.pipeline import run_property_research
+from app.routers.feature_intelligence import async_precompute_property_intelligence, db_feature_cache
 
 router = APIRouter(tags=["Properties"])
 
@@ -174,8 +175,9 @@ def create_property(
     db.add(audit)
     db.commit()
 
-    # Trigger authentic research pipeline in the background without blocking seller response
+    # Trigger authentic research pipeline and precompute feature intelligence in the background
     background_tasks.add_task(run_property_research, new_prop.id)
+    background_tasks.add_task(async_precompute_property_intelligence, new_prop.id)
 
     return new_prop
 
@@ -247,6 +249,10 @@ def update_property(
 
     if coords_changed or published_now:
         background_tasks.add_task(run_property_research, prop.id)
+
+    # Invalidate old cache and precompute updated intelligence in background
+    db_feature_cache.invalidate_property(db, prop.id)
+    background_tasks.add_task(async_precompute_property_intelligence, prop.id)
 
     return prop
 

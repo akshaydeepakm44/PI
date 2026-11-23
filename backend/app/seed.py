@@ -44,6 +44,30 @@ def seed_database(db: Session):
 
     # 2. Check if Ramky Kingston Park Orbit already exists
     ramky = db.query(models.Property).filter(models.Property.name.like("%Ramky Kingston%")).first()
+    if ramky and ramky.modules_data:
+        md = dict(ramky.modules_data)
+        import copy
+        from sqlalchemy.orm.attributes import flag_modified
+        md_copy = copy.deepcopy(md)
+        modified = False
+        if "pricing_breakdown" in md and "floor_rise" not in md["pricing_breakdown"]:
+            md_copy["pricing_breakdown"]["floor_rise"] = 25.0
+            modified = True
+        if "configurations" in md_copy and len(md_copy["configurations"]) >= 2:
+            c1 = md_copy["configurations"][0]
+            if c1.get("balcony_sqft") != 104.0 or c1.get("common_area_sqft") != 299.0:
+                c1["balcony_sqft"] = 104.0
+                c1["common_area_sqft"] = 299.0
+                modified = True
+            c2 = md_copy["configurations"][1]
+            if c2.get("balcony_sqft") != 94.0 or c2.get("common_area_sqft") != 489.0:
+                c2["balcony_sqft"] = 94.0
+                c2["common_area_sqft"] = 489.0
+                modified = True
+        if modified:
+            ramky.modules_data = md_copy
+            flag_modified(ramky, "modules_data")
+            db.commit()
     if not ramky:
         # Clear legacy properties to seamlessly transition to Hyderabad HiiN dataset
         db.query(models.Property).delete()
@@ -115,6 +139,8 @@ def seed_database(db: Session):
                             "name": "2 BHK Premium",
                             "sbu_sqft": 1300,
                             "carpet_sqft": 897,
+                            "balcony_sqft": 104.0,
+                            "common_area_sqft": 299.0,
                             "price_cr": 1.12,
                             "price_text": "₹1.12 Cr",
                             "facing": "East / West",
@@ -127,6 +153,8 @@ def seed_database(db: Session):
                             "name": "3 BHK Luxury",
                             "sbu_sqft": 1880,
                             "carpet_sqft": 1297,
+                            "balcony_sqft": 94.0,
+                            "common_area_sqft": 489.0,
                             "price_cr": 1.62,
                             "price_text": "₹1.62 Cr",
                             "facing": "North / East",
@@ -137,6 +165,7 @@ def seed_database(db: Session):
                     ],
                     "pricing_breakdown": {
                         "base_rate": 8600.0,
+                        "floor_rise": 25.0,
                         "facing_premium": "₹100 / sq ft",
                         "floor_rise_premium": "₹50 / sq ft per floor",
                         "view_premium": "₹100 / sq ft",

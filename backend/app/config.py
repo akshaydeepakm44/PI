@@ -19,14 +19,24 @@ class Settings(BaseSettings):
 
     # Phase 3: Evidence-Based AI Property Intelligence Engine
     AI_PROVIDER: str = os.getenv("AI_PROVIDER", "openai_compatible")
-    AI_BASE_URL: str = os.getenv("AI_BASE_URL", "http://115.244.46.68:8000/v1")
+    AI_BASE_URL: str = os.getenv("AI_BASE_URL", "")
     AI_MODEL: str = os.getenv("AI_MODEL", "current-model")
-    AI_API_KEY: str = os.getenv("AI_API_KEY", "sk-datai2i-a100-qwen35-27b-8x3f9z")
-    AI_TIMEOUT_SECONDS: float = float(os.getenv("AI_TIMEOUT_SECONDS", "1.5"))
+    AI_API_KEY: str = os.getenv("AI_API_KEY", "")
+    AI_TIMEOUT_SECONDS: float = float(os.getenv("AI_TIMEOUT_SECONDS", "120.0"))
     AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "3500"))
     AI_PROMPT_VERSION: str = "v3.0.0-buyer-analyst"
 
-    model_config = SettingsConfigDict(case_sensitive=True)
+    ROOT_ENV_PATH: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
+    BACKEND_ENV_PATH: str = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+
+    model_config = SettingsConfigDict(
+        env_file=[
+            os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env"),
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+        ],
+        case_sensitive=True,
+        extra="ignore"
+    )
 
 settings = Settings()
 

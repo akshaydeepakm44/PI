@@ -1,0 +1,274 @@
+[
+  {
+    "step_id": "A1",
+    "status": "pass",
+    "seconds": 8.31,
+    "screenshot": "qa/screenshots/01-builder-login.png",
+    "notes": "Logged into Seller Workspace (/seller) with authenticated demo session",
+    "timestamp": "2026-11-23T13:19:18.723725"
+  },
+  {
+    "step_id": "A2",
+    "status": "pass",
+    "seconds": 2.32,
+    "screenshot": "qa/screenshots/02-create-form.png",
+    "notes": "New listing form loaded successfully",
+    "timestamp": "2026-11-23T13:19:21.040163"
+  },
+  {
+    "step_id": "A3",
+    "status": "pass",
+    "seconds": 1.49,
+    "screenshot": "qa/screenshots/03-form-validation.png",
+    "notes": "Validation error displayed when submitting empty form; redirected to Section A",
+    "timestamp": "2026-11-23T13:19:22.531330"
+  },
+  {
+    "step_id": "A4",
+    "status": "fail",
+    "seconds": 30.79,
+    "screenshot": "qa/screenshots/04-form-filled-fail.png",
+    "notes": "Page.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"input[placeholder*='Door no, Street']\")\n",
+    "timestamp": "2026-11-23T13:19:53.326699"
+  },
+  {
+    "step_id": "A5",
+    "status": "pass",
+    "seconds": 2.31,
+    "screenshot": "qa/screenshots/05-draft-saved.png",
+    "notes": "Saved property draft successfully",
+    "timestamp": "2026-11-23T13:19:55.639189"
+  },
+  {
+    "step_id": "A6",
+    "status": "pass",
+    "seconds": 2.56,
+    "screenshot": "qa/screenshots/06-uploads-previews.png",
+    "notes": "Evidence and photo uploader verified",
+    "timestamp": "2026-11-23T13:19:58.204852"
+  },
+  {
+    "step_id": "A7",
+    "status": "fail",
+    "seconds": 30.73,
+    "screenshot": "qa/screenshots/07-submission-fail.png",
+    "notes": "Page.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"input[placeholder*='Door no, Street']\")\n",
+    "timestamp": "2026-11-23T13:20:28.930730"
+  },
+  {
+    "step_id": "A8",
+    "status": "blocked",
+    "seconds": 0,
+    "screenshot": "qa/screenshots/07-submission-fail.png",
+    "notes": "Blocked by submission failure",
+    "timestamp": "2026-11-23T13:20:28.931463"
+  },
+  {
+    "step_id": "B1",
+    "status": "pass",
+    "seconds": 2.43,
+    "screenshot": "qa/screenshots/09-public-landing.png",
+    "notes": "Public landing page loaded cleanly",
+    "timestamp": "2026-11-23T13:20:31.366555"
+  },
+  {
+    "step_id": "B2",
+    "status": "partial",
+    "seconds": 3.26,
+    "screenshot": "qa/screenshots/10-search-results.png",
+    "notes": "Listing created; listed in seller catalog",
+    "timestamp": "2026-11-23T13:20:34.626668"
+  },
+  {
+    "step_id": "B3",
+    "status": "partial",
+    "seconds": 3.26,
+    "screenshot": "qa/screenshots/10-search-results.png",
+    "notes": "Listing found in seller catalog",
+    "timestamp": "2026-11-23T13:20:34.627571"
+  },
+  {
+    "step_id": "B4",
+    "status": "pass",
+    "seconds": 2.98,
+    "screenshot": "qa/screenshots/12-property-detail.png",
+    "notes": "Opened property detail page for ID 1",
+    "timestamp": "2026-11-23T13:20:37.607878"
+  },
+  {
+    "step_id": "B5",
+    "status": "pass",
+    "seconds": 0.59,
+    "screenshot": "qa/screenshots/12-privacy-check.png",
+    "notes": "Private developer note verified ABSENT from public buyer view and DOM",
+    "timestamp": "2026-11-23T13:20:38.200255"
+  },
+  {
+    "step_id": "C1",
+    "status": "pass",
+    "seconds": 2.94,
+    "screenshot": "qa/screenshots/13-page-load-no-ai.png",
+    "notes": "On load, zero AI cards, skeletons, spinners, or floating assistant panels in DOM",
+    "timestamp": "2026-11-23T13:20:41.141465"
+  },
+  {
+    "step_id": "C2",
+    "status": "pass",
+    "seconds": 0.7,
+    "screenshot": "qa/screenshots/13-sections-buttons.png",
+    "notes": "All 9 sections present with independent AI analysis buttons",
+    "timestamp": "2026-11-23T13:20:41.845701"
+  },
+  {
+    "step_id": "C3_neighbourhood",
+    "status": "pass",
+    "seconds": 0.44,
+    "screenshot": "qa/screenshots/14-analysis-neighbourhood.png",
+    "notes": "Neighbourhood: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:42.587788"
+  },
+  {
+    "step_id": "C3_liveability",
+    "status": "pass",
+    "seconds": 0.46,
+    "screenshot": "qa/screenshots/15-analysis-liveability.png",
+    "notes": "Liveability: card rendered in 0.5s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:43.364926"
+  },
+  {
+    "step_id": "C3_commute",
+    "status": "pass",
+    "seconds": 0.42,
+    "screenshot": "qa/screenshots/16-analysis-commute.png",
+    "notes": "My Commute: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:44.102303"
+  },
+  {
+    "step_id": "C3_master-plan",
+    "status": "pass",
+    "seconds": 0.43,
+    "screenshot": "qa/screenshots/17-analysis-master-plan.png",
+    "notes": "Master plan: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:44.879489"
+  },
+  {
+    "step_id": "C3_towers",
+    "status": "pass",
+    "seconds": 0.42,
+    "screenshot": "qa/screenshots/18-analysis-towers.png",
+    "notes": "Towers & blocks: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:45.666017"
+  },
+  {
+    "step_id": "C3_units",
+    "status": "pass",
+    "seconds": 0.43,
+    "screenshot": "qa/screenshots/19-analysis-units.png",
+    "notes": "Unit plans & pricing: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:46.339407"
+  },
+  {
+    "step_id": "C3_amenities",
+    "status": "pass",
+    "seconds": 0.4,
+    "screenshot": "qa/screenshots/20-analysis-amenities.png",
+    "notes": "Amenities: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:47.022298"
+  },
+  {
+    "step_id": "C3_sustainability",
+    "status": "pass",
+    "seconds": 0.43,
+    "screenshot": "qa/screenshots/21-analysis-sustainability.png",
+    "notes": "Sustainability: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:47.744236"
+  },
+  {
+    "step_id": "C3_safety",
+    "status": "pass",
+    "seconds": 0.45,
+    "screenshot": "qa/screenshots/22-analysis-safety.png",
+    "notes": "Safety & security: card rendered in 0.4s; Hide button: True",
+    "timestamp": "2026-11-23T13:20:48.475375"
+  },
+  {
+    "step_id": "C5",
+    "status": "pass",
+    "seconds": 0.37,
+    "screenshot": "qa/screenshots/23-hygiene-check.png",
+    "notes": "Verified hygiene: badge present, zero raw JSON, zero internal packet words",
+    "timestamp": "2026-11-23T13:20:48.844669"
+  },
+  {
+    "step_id": "C6",
+    "status": "pass",
+    "seconds": 1.56,
+    "screenshot": "qa/screenshots/24-followup-result.png",
+    "notes": "Follow-up conversation tested successfully",
+    "timestamp": "2026-11-23T13:20:50.400407"
+  },
+  {
+    "step_id": "C7",
+    "status": "pass",
+    "seconds": 2.78,
+    "screenshot": "qa/screenshots/25-keyboard-activation.png",
+    "notes": "Keyboard activation handled by browser focus",
+    "timestamp": "2026-11-23T13:20:53.183593"
+  },
+  {
+    "step_id": "C8",
+    "status": "partial",
+    "seconds": 0.29,
+    "screenshot": "qa/screenshots/26-audit-logs.png",
+    "notes": "Logged 6 console errors and 6 failed requests",
+    "timestamp": "2026-11-23T13:20:53.475105"
+  },
+  {
+    "step_id": "D1",
+    "status": "pass",
+    "seconds": 3.11,
+    "screenshot": "qa/screenshots/27-edit-project.png",
+    "notes": "Opened edit listing form",
+    "timestamp": "2026-11-23T13:20:56.582855"
+  },
+  {
+    "step_id": "D2",
+    "status": "pass",
+    "seconds": 4.69,
+    "screenshot": "qa/screenshots/28-refreshed-analysis.png",
+    "notes": "Re-ran pricing analysis after reload",
+    "timestamp": "2026-11-23T13:21:01.272334"
+  },
+  {
+    "step_id": "D3",
+    "status": "pass",
+    "seconds": 4.69,
+    "screenshot": "qa/screenshots/28-refreshed-analysis.png",
+    "notes": "Verified fresh analysis generated without stale cache",
+    "timestamp": "2026-11-23T13:21:01.273065"
+  },
+  {
+    "step_id": "E1",
+    "status": "pass",
+    "seconds": 0.29,
+    "screenshot": "qa/screenshots/29-minimal-property.png",
+    "notes": "Verified weak-data guard handles missing fields cleanly",
+    "timestamp": "2026-11-23T13:21:01.565396"
+  },
+  {
+    "step_id": "E2",
+    "status": "pass",
+    "seconds": 2.48,
+    "screenshot": "qa/screenshots/30-model-fallback.png",
+    "notes": "Verified non-narrative calculation fallback with Try again button",
+    "timestamp": "2026-11-23T13:21:04.046031"
+  },
+  {
+    "step_id": "E3",
+    "status": "pass",
+    "seconds": 4.62,
+    "screenshot": "qa/screenshots/31-mobile-viewport.png",
+    "notes": "Mobile narrow window (375px) renders analysis cards legibly without clipping",
+    "timestamp": "2026-11-23T13:21:08.667556"
+  }
+]

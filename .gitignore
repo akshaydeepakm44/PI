@@ -34,3 +34,15 @@ current-live-url.txt
 # OS files
 .DS_Store
 Thumbs.db
+
+# Test outputs, audit logs and local scripts
+property_1_real_model_output.json
+review_set_raw.json
+followup_packet_exact.json
+backend/scripts/
+backend/app/services/*.log
+*.log
+qa/screenshots/
+backend/capture_task_screenshots.py
+backend/take_screenshots.py
+

@@ -17,12 +17,14 @@ export interface ChatMessage {
 }
 
 export const SUGGESTED_QUESTIONS = [
-  'Explain the most interesting design aspects of this project',
-  'What are the main trade-offs between the 2 BHK and 3 BHK configurations?',
-  'Does the central green connect conveniently to all six towers?',
-  'How does the environmental liveability compare with road connectivity?',
-  'What should I investigate further before visiting?',
-  'What important information is missing from this property\'s records?'
+  'What are the key details of this property?',
+  'What amenities are available?',
+  'What schools and hospitals are nearby?',
+  'What are the main advantages and limitations?',
+  'What additional costs should I consider?',
+  'What information is still missing?',
+  'What questions should I ask the seller?',
+  'How does this property fit my preferences?'
 ];
 
 // Helper to format timestamps consistently
@@ -39,9 +41,9 @@ export function getInitialDemoMessages(property?: Property | null): ChatMessage[
     {
       id: 'msg-init-1',
       sender: 'assistant',
-      text: `Hello! I am your **Platform-wide AI Assistant** for **${propName}**.\n\nI have ingested the master plan, unit layouts, RERA disclosures, live atmospheric telemetry, and topological road graphs. I can reason across architectural efficiency, tower orientations, environmental quality, and cost trade-offs.\n\nWhat would you like to explore?`,
+      text: `Hello! 👋 I am your **Property Intelligence Agent** for **${propName}**.\n\nI analyze verified project records, calculation packets, unit economics, and site geometry. I can explain carpet rates, builder extras, floor rise premiums, lift density, commute hours, or clubhouse allocation.\n\nWhat would you like to explore?`,
       timestamp: '10:30 AM',
-      sources: ['Property listing', 'Location research'],
+      sources: ['Seller-provided information', 'Sample calculation'],
       notVerifiedNotice: false
     },
     {

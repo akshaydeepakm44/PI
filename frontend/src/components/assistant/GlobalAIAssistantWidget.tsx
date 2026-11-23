@@ -66,6 +66,13 @@ export const GlobalAIAssistantWidget: React.FC = () => {
     }
   }, [isOpen]);
 
+  // Single-agent architecture: On property detail pages, the dedicated
+  // Property Intelligence Agent handles all questions and follow-ups.
+  // Suppress the global floating demo widget to prevent double-agent collision.
+  if (propertyMatch) {
+    return null;
+  }
+
   const handleSendMessage = async (queryText?: string) => {
     const textToSend = (queryText || inputQuery).trim();
     if (!textToSend || isTyping) return;
