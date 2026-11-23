@@ -14,9 +14,22 @@ from app.services.engines import (
     annual_commute_hours,
     implied_speed,
     claim_ledger,
+    calculate_solar_seasons,
+    calculate_tower_shadows,
+    calculate_facade_sunlight,
+    calculate_price_orientation_delta,
+    calculate_central_green_shade,
+    calculate_air_quality_metrics,
+    compute_peer_cohort_analysis,
+    compute_map_engine_analysis,
+    compute_terrain_elevation_analysis,
+    compute_peer_engine_analysis,
+    lookup_registration,
+    compare_record_with_builder_data,
     ASSUMPTIONS_REGISTRY,
     CalcResult
 )
+from app.services.air_quality import fetch_air_quality_7d
 
 # Strict ALLOW-LIST of permitted property fields.
 # Anything not explicitly listed here (e.g. owner_x, seller_y, pan_z, aadhaar, bank) is dropped.
@@ -59,7 +72,10 @@ ALLOWED_MODULES_DATA_KEYS = {
     "master_plan",
     "commute_hubs",
     "tower_entrances",
-    "clubhouse_coords"
+    "clubhouse_coords",
+    "tower_footprints",
+    "green_space",
+    "neighbourhood_places"
 }
 
 def filter_by_allow_list(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -89,7 +105,8 @@ def filter_by_allow_list(data: Dict[str, Any]) -> Dict[str, Any]:
 def build_calculation_packet(
     property_data: Dict[str, Any],
     module: str,
-    assumptions_override: Optional[Dict[str, Any]] = None
+    assumptions_override: Optional[Dict[str, Any]] = None,
+    peer_properties: Optional[List[Dict[str, Any]]] = None
 ) -> Dict[str, Any]:
     """
     Builds a compact calculation packet for a property and module.
@@ -97,6 +114,9 @@ def build_calculation_packet(
     Raw property data is never sent to the LLM.
     """
     # 1. Filter property data strictly by allow-list
+    module = (module or "").replace("-", "_")
+    if module == "units":
+        module = "pricing"
     clean_prop = filter_by_allow_list(property_data)
     property_id = clean_prop.get("id") or clean_prop.get("property_id")
 
@@ -233,6 +253,12 @@ def build_calculation_packet(
                 )
                 results.append(t_res)
 
+        lat = clean_prop.get("latitude") or 17.447
+        lon = clean_prop.get("longitude") or 78.318
+        plan_north = float(md.get("plan_north_bearing") or 0.0)
+        po_res = calculate_price_orientation_delta(lat, lon, configs, plan_north)
+        results.append(po_res)
+
     # =========================================================================
     # MODULE: MASTER PLAN (Master plan and towers)
     # =========================================================================
@@ -289,6 +315,18 @@ def build_calculation_packet(
                 "needed_for": "straight_line_distances",
                 "description": "Seller needs to supply coordinates of tower entrances and central clubhouse"
             })
+
+        # Solar & Shadows analysis for master plan
+        lat = clean_prop.get("latitude") or 17.447
+        lon = clean_prop.get("longitude") or 78.318
+        floors = clean_prop.get("floors") or 24
+        solar_s_res = calculate_solar_seasons(lat, lon)
+        results.append(solar_s_res)
+        shadow_res = calculate_tower_shadows(lat, lon, floors, site_acres, assumptions_override)
+        results.append(shadow_res)
+        t_footprints = md.get("tower_footprints")
+        shade_res = calculate_central_green_shade(lat, lon, t_footprints)
+        results.append(shade_res)
 
     # =========================================================================
     # MODULE: COMMUTE (Neighbourhood and commute)
@@ -439,6 +477,78 @@ def build_calculation_packet(
             "needed_for": "rainwater_harvesting_capacity",
             "description": "Recharge pit dimensions and catchment filtration capacity are missing from builder records; recharge pits replenish groundwater and do not represent dedicated household potable storage."
         })
+
+    # =========================================================================
+    # MODULE: NEIGHBOURHOOD & LIVEABILITY (Air quality and spatial metrics)
+    # =========================================================================
+    elif module in ["neighbourhood", "liveability"]:
+        lat = clean_prop.get("latitude") or 17.447
+        lon = clean_prop.get("longitude") or 78.318
+        builder_aqi = 94.0
+        if clean_prop.get("air_quality_index"):
+            try:
+                builder_aqi = float(clean_prop["air_quality_index"])
+            except Exception:
+                pass
+        raw_aq = fetch_air_quality_7d(lat, lon)
+        aq_res = calculate_air_quality_metrics(
+            raw_aq,
+            builder_listed_aqi=builder_aqi,
+            has_outdoor_amenities=True,
+            assumptions_override=assumptions_override
+        )
+        results.append(aq_res)
+
+        # Map Engine (places within 5 km, detour factor, walk accessibility, noise sources)
+        builder_places = clean_prop.get("transit_routes") or clean_prop.get("commute_hubs") or []
+        map_analysis = compute_map_engine_analysis(lat, lon, builder_places)
+        results.append(CalcResult(
+            id="map_engine_analysis",
+            value=map_analysis,
+            formula_text="OpenStreetMap spatial routing, detour factor and accessibility audit",
+            inputs={"latitude": lat, "longitude": lon}
+        ))
+
+        # Terrain Engine (elevation relative to 1 km ring, nearest low point)
+        terrain_analysis = compute_terrain_elevation_analysis(lat, lon)
+        results.append(CalcResult(
+            id="terrain_elevation_analysis",
+            value=terrain_analysis,
+            formula_text="Open elevation 30m DEM relative relief calculation",
+            inputs={"latitude": lat, "longitude": lon}
+        ))
+
+    # =========================================================================
+    # MODULE: STANDOUT (What stands out - Page-level peer cohort analysis)
+    # =========================================================================
+    elif module == "standout":
+        standout_res = compute_peer_cohort_analysis(
+            property_id=property_id or 1,
+            property_data=clean_prop,
+            peer_properties=peer_properties or [],
+            assumptions_override=assumptions_override
+        )
+        results.append(standout_res)
+
+    # =========================================================================
+    # MODULE: ADVISOR_READ (Page-level Advisor's Read)
+    # =========================================================================
+    elif module in ["advisor_read", "advisor"]:
+        from app.services.advisor_pipeline import generate_advisor_read
+        lat = clean_prop.get("latitude") or 17.447
+        lon = clean_prop.get("longitude") or 78.318
+        raw_aq = fetch_air_quality_7d(lat, lon)
+        adv_res = generate_advisor_read(
+            property_data=clean_prop,
+            peer_properties=peer_properties or [],
+            raw_aq_data=raw_aq
+        )
+        results.append(CalcResult(
+            id="advisor_read_analysis",
+            value=adv_res,
+            formula_text="Senior Advisor deterministic ranking and materiality scoring pipeline",
+            inputs={"property_id": property_id}
+        ))
 
     # =========================================================================
     # Harvest data gaps from missing inputs in all calculated results

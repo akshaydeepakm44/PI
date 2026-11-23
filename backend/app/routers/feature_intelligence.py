@@ -50,6 +50,12 @@ class FeatureFollowupRequest(BaseModel):
     question: str
 
 
+class AdvisorReadRequest(BaseModel):
+    buyer_profile: Optional[Dict[str, Any]] = None
+    refresh: bool = False
+    simulate_unavailable: bool = False
+
+
 class DbFeatureIntelligenceCache:
     """
     Database-backed shared cache stored in table 'feature_intelligence_cache'
@@ -310,7 +316,14 @@ async def get_feature_intelligence(
         raise HTTPException(status_code=404, detail="Property not found")
 
     prop_dict = property_model_to_dict(prop)
-    packet = build_calculation_packet(prop_dict, module)
+    module = (module or "").replace("-", "_")
+    if module == "units":
+        module = "pricing"
+    peer_dicts = []
+    if module in ["standout", "advisor_read", "advisor"]:
+        peers = db.query(models.Property).filter(models.Property.id != property_id).all()
+        peer_dicts = [property_model_to_dict(p) for p in peers]
+    packet = build_calculation_packet(prop_dict, module, peer_properties=peer_dicts)
 
     if simulate_unavailable:
         result = await generate_feature_intelligence(
@@ -349,7 +362,7 @@ async def get_feature_intelligence(
         }
 
     # 3. Synchronous generation & cache in database
-    result = await generate_feature_intelligence(prop_dict, module, property_id=property_id)
+    result = await generate_feature_intelligence(prop_dict, module, property_id=property_id, peer_properties=peer_dicts)
     db_feature_cache.set(db, property_id, module, packet, result)
 
     return {
@@ -517,6 +530,97 @@ async def answer_feature_followup(
         "answer": final_answer,
         "source": source
     }
+
+
+@router.post("/properties/{property_id}/feature-intelligence/advisor")
+async def get_advisor_read_endpoint(
+    property_id: int,
+    payload: Optional[AdvisorReadRequest] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Returns ranked Senior Advisor's Read for a property.
+    If buyer_profile is provided, computes dynamically for that user without saving
+    user profile or places to shared cache, logs, or analysis tables (strict privacy rule).
+    If no buyer_profile is provided (general read), utilizes shared cache.
+    """
+    prop = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if not prop:
+        raise HTTPException(status_code=404, detail="Property not found")
+
+    prop_dict = property_model_to_dict(prop)
+    peers = db.query(models.Property).filter(models.Property.id != property_id).all()
+    peer_dicts = [property_model_to_dict(p) for p in peers]
+
+    simulate_unavail = payload.simulate_unavailable if payload else False
+    if simulate_unavail:
+        return {
+            "status": "unavailable",
+            "property_id": property_id,
+            "module": "advisor_read",
+            "reason": "All outside evidence families (World, Market, Record) are unavailable. Narrative withheld.",
+            "evidence_panel": {
+                "world": {"status": "unavailable"},
+                "market": {"status": "unavailable"},
+                "record": {"status": "unavailable"},
+                "buyer": {"status": "unavailable"}
+            }
+        }
+
+    from app.services.advisor_pipeline import generate_advisor_read
+    from app.services.air_quality import fetch_air_quality_7d
+
+    lat = prop_dict.get("latitude") or 17.447
+    lon = prop_dict.get("longitude") or 78.318
+    raw_aq = fetch_air_quality_7d(lat, lon)
+
+    buyer_prof = payload.buyer_profile if payload else None
+
+    # Privacy Rule:
+    # A user's profile and places never appear in another user's response, shared cache, logs or analysis tables.
+    if buyer_prof:
+        result = generate_advisor_read(
+            property_data=prop_dict,
+            peer_properties=peer_dicts,
+            raw_aq_data=raw_aq,
+            buyer_profile_data=buyer_prof
+        )
+        return {
+            "status": result.get("status", "ready"),
+            "cached": False,
+            "property_id": property_id,
+            "module": "advisor_read",
+            **result
+        }
+
+    # General read without profile: can be cached
+    packet = build_calculation_packet(prop_dict, "advisor_read", peer_properties=peer_dicts)
+    refresh = payload.refresh if payload else False
+    if not refresh:
+        cached_data = db_feature_cache.get(db, property_id, "advisor_read", packet)
+        if cached_data:
+            return {
+                "status": "ready",
+                "cached": True,
+                **cached_data
+            }
+
+    result = generate_advisor_read(
+        property_data=prop_dict,
+        peer_properties=peer_dicts,
+        raw_aq_data=raw_aq,
+        buyer_profile_data=None
+    )
+    resp = {
+        "status": result.get("status", "ready"),
+        "cached": False,
+        "property_id": property_id,
+        "module": "advisor_read",
+        **result
+    }
+    db_feature_cache.set(db, property_id, "advisor_read", packet, resp)
+    return resp
+
 
 
 @router.delete("/properties/{property_id}/feature-intelligence/cache")

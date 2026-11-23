@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { AIAssistantChat } from '../../components/assistant/AIAssistantChat';
 import { PropertyMap } from '../../components/common/PropertyMap';
 import { SectionAIAnalysis } from '../../components/intelligence/SectionAIAnalysis';
+import { StandoutAIAnalysis } from '../../components/intelligence/StandoutAIAnalysis';
+import { AdvisorReadCard } from '../../components/intelligence/AdvisorReadCard';
 import {
   MapPin,
   Bookmark,
@@ -422,6 +424,10 @@ return (
           <small>Blocks / Wings</small>
         </div>
       </div>
+
+      {/* Page-level "Advisor's read" AI analysis button & card directly under stats bar */}
+      <AdvisorReadCard propertyId={propertyId} />
+      <StandoutAIAnalysis propertyId={propertyId} city={property?.city || 'Hyderabad'} />
     </div>
 
     {/* Sticky Section Navigation */}

@@ -67,6 +67,37 @@ ASSUMPTIONS_REGISTRY: Dict[str, Assumption] = {
         source_note="analyst assumption (owner: architecture-analyst)",
         verified=False
     ),
+    "plan_north_bearing": Assumption(
+        id="plan_north_bearing",
+        value=0.0,
+        unit="degrees",
+        reason="Architectural site plan north rotation relative to true north",
+        source_note="analyst assumption (owner: architecture-analyst)",
+        verified=False
+    ),
+    "peer_min_count": Assumption(
+        id="peer_min_count",
+        value=5,
+        unit="count",
+        reason="Minimum peer cohort size required to compute comparative ranks and superlatives",
+        source_note="analyst assumption (owner: market-analyst)",
+        verified=False
+    ),
+    "cpcb_aqi_breakpoints": Assumption(
+        id="cpcb_aqi_breakpoints",
+        value={
+            "Good": {"aqi": [0, 50], "pm2_5": [0, 30]},
+            "Satisfactory": {"aqi": [51, 100], "pm2_5": [31, 60]},
+            "Moderate": {"aqi": [101, 200], "pm2_5": [61, 90]},
+            "Poor": {"aqi": [201, 300], "pm2_5": [91, 120]},
+            "Very Poor": {"aqi": [301, 400], "pm2_5": [121, 250]},
+            "Severe": {"aqi": [401, 500], "pm2_5": [250, 1000]}
+        },
+        unit="lookup_table",
+        reason="CPCB India AQI category concentration thresholds",
+        source_note="CPCB AQI breakpoints; to be checked against the CPCB document",
+        verified=False
+    ),
     "trips_per_school_day": Assumption(
         id="trips_per_school_day",
         value=4,

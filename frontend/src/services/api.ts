@@ -278,6 +278,19 @@ export const featureIntelligenceApi = {
   ): Promise<{ answer: string; source: string; property_id: number; module: string }> => {
     const res = await api.post(`/properties/${propertyId}/feature-intelligence/followup`, payload);
     return res.data;
+  },
+  getAdvisorRead: async (
+    propertyId: number,
+    buyerProfile?: any,
+    refresh = false,
+    simulateUnavailable = false
+  ): Promise<any> => {
+    const res = await api.post(`/properties/${propertyId}/feature-intelligence/advisor`, {
+      buyer_profile: buyerProfile,
+      refresh,
+      simulate_unavailable: simulateUnavailable
+    });
+    return res.data;
   }
 };
 

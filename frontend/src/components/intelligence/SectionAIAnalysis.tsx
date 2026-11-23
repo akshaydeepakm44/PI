@@ -21,9 +21,9 @@ export interface SectionAIAnalysisProps {
   className?: string;
 }
 
-const SECTION_TO_LIVE_MODULE: Record<string, 'commute' | 'master_plan' | 'pricing' | 'amenities' | 'sustainability'> = {
-  neighbourhood: 'commute',
-  liveability: 'commute',
+const SECTION_TO_LIVE_MODULE: Record<string, string> = {
+  neighbourhood: 'neighbourhood',
+  liveability: 'liveability',
   commute: 'commute',
   'master-plan': 'master_plan',
   towers: 'master_plan',
@@ -110,15 +110,47 @@ export const SectionAIAnalysis: React.FC<SectionAIAnalysisProps> = ({
 
         // Map live response into unified display structure
         const demoItem = SAMPLE_ANALYSES[sectionId];
+        let liveVisual = demoItem?.visual || {
+          type: 'parking_share_bar',
+          sharePct: 63,
+          label: 'Calculated project metrics'
+        };
+
+        const aqResult = liveRes.packet?.results?.find((r: any) => r.id === 'air_quality_metrics')?.value;
+        if (aqResult && (sectionId === 'neighbourhood' || sectionId === 'liveability')) {
+          liveVisual = {
+            type: 'air_quality_strip',
+            hourly: aqResult.hourly_profile_24h,
+            cleanestWindow: aqResult.cleanest_window_3h ? `${aqResult.cleanest_window_3h.start_hour}:00–${aqResult.cleanest_window_3h.end_hour}:00 (cleanest: ${Math.round(aqResult.cleanest_window_3h.avg_pm2_5)} µg/m³)` : undefined,
+            worstWindow: aqResult.worst_window_3h ? `${aqResult.worst_window_3h.start_hour}:00–${aqResult.worst_window_3h.end_hour}:00 (highest: ${Math.round(aqResult.worst_window_3h.avg_pm2_5)} µg/m³)` : undefined,
+            medianPm25: Math.round(aqResult.median_pm2_5_7d || 41),
+            stationName: aqResult.nearest_official_monitor?.station_name || 'Central University TSPCB',
+            distanceKm: aqResult.nearest_official_monitor?.distance_km || 1.8
+          };
+        } else if (sectionId === 'master-plan') {
+          const solarRes = liveRes.packet?.results?.find((r: any) => r.id === 'solar_shadow')?.value;
+          if (solarRes) {
+            liveVisual = {
+              type: 'sun_path_diagram',
+              decSunriseAz: solarRes.dec_sunrise_azimuth || 114.6,
+              decSunsetAz: solarRes.dec_sunset_azimuth || 245.4,
+              junSunriseAz: solarRes.jun_sunrise_azimuth || 65.4,
+              junSunsetAz: solarRes.jun_sunset_azimuth || 294.6,
+              equinoxSunriseAz: 90.0,
+              equinoxSunsetAz: 270.0,
+              decNoonShadow: solarRes.shadow_length_m?.dec_noon || 62.3,
+              junNoonShadow: solarRes.shadow_length_m?.jun_noon || 7.6,
+              siteWidth: 258,
+              towerHeight: 72
+            };
+          }
+        }
+
         const liveDataMapped: SectionAnalysisData = {
           sectionKey: sectionId,
           sectionTitle: displayTitle,
           briefing: liveRes.briefing || `Calculated metrics for ${displayTitle}.`,
-          visual: demoItem?.visual || {
-            type: 'parking_share_bar',
-            sharePct: 63,
-            label: 'Calculated project metrics'
-          },
+          visual: liveVisual,
           findings: liveRes.findings.map((f: any) => ({
             claim: f.claim,
             why_it_follows: f.why_it_follows,

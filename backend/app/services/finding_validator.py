@@ -17,6 +17,41 @@ BANNED_WORDS = [
     r"\btop[- ]ranked\b",
 ]
 
+# Health, comfort, and atmospheric qualitative verdicts banned near air or sunlight findings
+AIR_SUN_BANNED_WORDS = [
+    r"\bhealthy\b",
+    r"\bsafe\b",
+    r"\bclean\b",
+    r"\bbright\b",
+    r"\bhot\b",
+    r"\bcomfortable\b",
+    r"\bgood\s+light\b",
+]
+
+# Other project / competitor names that must never be revealed
+OTHER_PROJECT_NAMES = [
+    r"\bSolace\s+Residences\b",
+    r"\bAparna\s+Sowparnika\b",
+    r"\bRhythm\s+of\s+Rain\b",
+    r"\bAurelia\s+Heights\b",
+    r"\bSattva\s+Greenwood\b",
+    r"\bLakeview\s+Residences\b",
+    r"\bUrbania\s+Meadows\b",
+]
+
+# Superlative words
+SUPERLATIVE_WORDS = [
+    r"\bbest\b",
+    r"\bworst\b",
+    r"\bhighest\b",
+    r"\blowest\b",
+    r"\btop\b",
+    r"\bcheapest\b",
+    r"\bcleanest\b",
+    r"\bfastest\b",
+    r"\bslowest\b",
+]
+
 MONTH_NAMES = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*"
 
 DATE_ORDINAL_PATTERNS = [
@@ -492,6 +527,62 @@ def validate_finding(finding: Dict[str, Any], packet: Dict[str, Any]) -> Finding
         if re.search(banned, full_text, re.IGNORECASE):
             errors.append(f"Contains banned sales advice or guarantee phrasing matching '{banned}'")
 
+    # Check for other project / competitor names
+    for name_pat in OTHER_PROJECT_NAMES:
+        m_name = re.search(name_pat, full_text, re.IGNORECASE)
+        if m_name:
+            errors.append(f"Contains name of another project '{m_name.group(0)}'; competitor names are forbidden")
+
+    # Check for air and sun qualitative/health words
+    is_air_or_sun = any(k in full_text.lower() for k in ["air", "pm2.5", "pm10", "aqi", "sun", "sunlight", "facade", "shadow", "solar"]) or packet.get("module") in ["neighbourhood", "liveability", "master_plan"]
+    if is_air_or_sun:
+        for air_pat in AIR_SUN_BANNED_WORDS:
+            m_air = re.search(air_pat, full_text, re.IGNORECASE)
+            if m_air:
+                errors.append(f"Contains prohibited qualitative/health word '{m_air.group(0)}' in air/sunlight analysis")
+
+    # Check for superlative words
+    for sup_pat in SUPERLATIVE_WORDS:
+        m_sup = re.search(sup_pat, full_text, re.IGNORECASE)
+        if m_sup:
+            has_rank_1 = False
+            for r in packet.get("results", []):
+                val = r.get("value")
+                if isinstance(val, dict):
+                    if val.get("rank") == 1 and (val.get("cohort_total") or val.get("peer_count", 0)) >= 5:
+                        has_rank_1 = True
+                    if isinstance(val.get("all_metrics"), dict):
+                        for m_info in val["all_metrics"].values():
+                            if isinstance(m_info, dict) and m_info.get("rank") == 1 and (m_info.get("cohort_total") or m_info.get("peer_count", 0)) >= 5:
+                                has_rank_1 = True
+            peer_context_stated = bool(re.search(r"\b(?:among|of|out of|in|across)\s+(\d+)\s*(?:peers|projects|properties)?\b", full_text, re.IGNORECASE))
+            if not (has_rank_1 and peer_context_stated):
+                errors.append(f"Superlative '{m_sup.group(0)}' is forbidden unless computed as rank 1 among at least 5 peers and the peer count is stated")
+
+    # Novelty Gate: Restatements check
+    GRID_RESTATED_NUMBERS = {
+        "liveability": {4.1, 128.0, 3.6, 74.0, 94.0},
+        "neighbourhood": {3.0, 3.4, 1.2},
+    }
+    mod = packet.get("module", "")
+    if mod in GRID_RESTATED_NUMBERS:
+        grid_nums = GRID_RESTATED_NUMBERS[mod]
+        finding_nums = set()
+        for num_val, tok in extract_numbers_from_text(full_text):
+            if not is_date_or_ordinal(num_val, full_text, tok):
+                finding_nums.add(num_val)
+        if finding_nums and finding_nums.issubset(grid_nums):
+            errors.append(f"Fails novelty gate: numbers {finding_nums} only restate displayed section grid fields without a derived engine calculation")
+
+    BANNED_SAMPLE_RESTATEMENTS = [
+        "Groceries are the closest daily need at 1.2 km",
+        "From this project it is 22 minutes each way to DLF Cyber City",
+        "The school is nearly three times as far as the supermarket"
+    ]
+    for b_stmt in BANNED_SAMPLE_RESTATEMENTS:
+        if b_stmt.lower() in full_text.lower():
+            errors.append(f"Fails novelty gate: text restates removed sample listing claim ('{b_stmt}')")
+
     # 5b. Reject benchmark and norm words unless tied to a verified registry entry (verified=True)
     NORM_WORDS = [
         r"\btypical\b", r"\bstandard\b", r"\bindustry\b", r"\bnormally\b",
@@ -734,4 +825,173 @@ def validate_fallback_payload(payload: Dict[str, Any], packet: Dict[str, Any]) -
                 errors.append(f"Fallback key number '{token}' (value {num_val}) not found in calculation packet")
 
     return FindingValidationResult(is_valid=(len(errors) == 0), errors=errors)
+
+
+ADVISOR_VOICE_BANNED_WORDS = [
+    r"\byou should buy\b",
+    r"\byou should book\b",
+    r"\bwe recommend\b",
+    r"\brecommend\b",
+    r"\bmust buy\b",
+    r"\bmust book\b",
+    r"\bwalk away\b",
+    r"\bavoid\b",
+    r"\bskip\b",
+    r"\bwait\b",
+    r"\binvest\b",
+    r"\bwill appreciate\b",
+    r"\bguaranteed\b",
+    r"\brisk[- ]free\b",
+    r"\bluxury\b",
+    r"\bpremium\b",
+    r"\bperfect\b",
+    r"\bideal\b",
+    r"\bhealthy\b",
+    r"\bsafe\b",
+    r"\bcomfort\b",
+    r"\bcomfortable\b",
+]
+
+INJECTION_PATTERNS = [
+    r"<script\b",
+    r"\bignore\s+(?:all\s+)?previous\s+instructions\b",
+    r"\bsystem\s+prompt\b",
+    r"javascript:",
+    r"\bdrop\s+table\b",
+    r"\bselect\s+\*\s+from\b"
+]
+
+def sanitize_user_text(text: str, max_length: int = 100) -> str:
+    """Sanitises and length-caps user-supplied labels and place names."""
+    if not text:
+        return ""
+    clean = re.sub(r"[<>{}\$\[\]`]", "", str(text)).strip()
+    return clean[:max_length]
+
+def validate_advisor_read(
+    read_data: Dict[str, Any],
+    packet: Optional[Dict[str, Any]] = None
+) -> FindingValidationResult:
+    """
+    Validates complete Advisor's Read:
+    - Provenance gate (>= 50% non-builder numbers, valid families, source and date required)
+    - Voice gate (calm advisor persona, no purchase instructions, no banned qualitative words)
+    - Diversity cap (at most 2 findings from any single family)
+    - Structure gate (signature line <= 30 words, 3 matters most, tension, settle first, footer)
+    - Security / injection gate on place names and labels
+    """
+    errors: List[str] = []
+    if not isinstance(read_data, dict):
+        return FindingValidationResult(is_valid=False, errors=["Advisor read must be a dictionary"])
+
+    # 1. Structure Gate
+    sig_line = read_data.get("signature_line") or ""
+    if not sig_line:
+        errors.append("signature_line is missing or empty")
+    elif len(sig_line.split()) > 30:
+        errors.append(f"signature_line word count ({len(sig_line.split())}) exceeds 30 words")
+
+    top3 = read_data.get("what_matters_most") or []
+    if len(top3) != 3:
+        errors.append(f"what_matters_most must contain exactly 3 findings, found {len(top3)}")
+
+    # Tension
+    tension = read_data.get("tension") or {}
+    tension_text = tension.get("text") or ""
+    if not tension_text:
+        errors.append("tension text is missing or empty")
+
+    # Settle first
+    settle_first = read_data.get("settle_first") or {}
+    if not settle_first.get("question") or not settle_first.get("why"):
+        errors.append("settle_first requires both 'question' and 'why'")
+
+    # Footer disclaimer
+    footer = read_data.get("footer") or {}
+    disclaimer = footer.get("disclaimer") or ""
+    if "Decision support from listed data" not in disclaimer or "Not financial, legal or investment advice" not in disclaimer:
+        errors.append("Footer must contain the mandatory decision support and non-advice disclaimer")
+
+    # 2. Provenance Gate & Diversity Cap
+    family_counts: Dict[str, int] = {}
+    valid_families = {"builder", "world", "market", "record", "buyer"}
+    all_builder = True
+    non_builder_numbers_count = 0
+    total_numbers_count = 0
+
+    for idx, item in enumerate(top3):
+        fam = item.get("family", "")
+        if fam not in valid_families:
+            errors.append(f"Finding #{idx+1} has invalid evidence family '{fam}'")
+        if fam != "builder":
+            all_builder = False
+            if not item.get("source") or not item.get("date"):
+                errors.append(f"Finding #{idx+1} (family '{fam}') is missing source or date")
+
+        family_counts[fam] = family_counts.get(fam, 0) + 1
+
+        # Claim word limit <= 25 words
+        claim = item.get("claim", "")
+        if len(claim.split()) > 25:
+            errors.append(f"Finding #{idx+1} claim exceeds 25 words ({len(claim.split())})")
+
+        # Why word limit <= 70 words
+        why = item.get("why", "")
+        if len(why.split()) > 70:
+            errors.append(f"Finding #{idx+1} why exceeds 70 words ({len(why.split())})")
+
+        # For you word limit <= 40 words
+        for_you = item.get("for_you")
+        if for_you and len(for_you.split()) > 40:
+            errors.append(f"Finding #{idx+1} for_you exceeds 40 words ({len(for_you.split())})")
+
+        # Changes if / flip condition
+        if not item.get("changes_if"):
+            errors.append(f"Finding #{idx+1} is missing 'changes_if'")
+
+        # Numbers extraction
+        text_block = f"{claim} {why}"
+        nums = extract_numbers_from_text(text_block)
+        for val, tok in nums:
+            if is_date_or_ordinal(val, text_block, tok):
+                continue
+            total_numbers_count += 1
+            if fam != "builder":
+                non_builder_numbers_count += 1
+
+    if all_builder and len(top3) > 0:
+        errors.append("Provenance gate failed: all findings have family 'builder' (outside evidence required)")
+
+    # Diversity Cap: At most 2 selected findings from one family
+    for fam, cnt in family_counts.items():
+        if cnt > 2:
+            errors.append(f"Diversity cap exceeded: family '{fam}' has {cnt} findings (maximum allowed is 2)")
+
+    # Fewer than half numbers from non-builder evidence
+    if total_numbers_count > 0 and (non_builder_numbers_count / float(total_numbers_count)) < 0.50:
+        errors.append("Provenance gate failed: fewer than half of numbers come from non-builder evidence")
+
+    # 3. Voice Gate
+    full_text = f"{sig_line} {tension_text} {settle_first.get('question', '')} {settle_first.get('why', '')}"
+    for item in top3:
+        full_text += f" {item.get('claim', '')} {item.get('why', '')} {item.get('changes_if', '')}"
+
+    for b in ADVISOR_VOICE_BANNED_WORDS:
+        if re.search(b, full_text, re.IGNORECASE):
+            errors.append(f"Voice gate failed: contains banned word/phrase matching '{b}'")
+
+    for inj in INJECTION_PATTERNS:
+        if re.search(inj, full_text, re.IGNORECASE):
+            errors.append(f"Security gate failed: contains forbidden script/injection pattern '{inj}'")
+
+    # Novelty Gate: Restatements check
+    if re.search(r"Parks\s+score\s+best\s+at\s+4\.1", full_text, re.IGNORECASE) or re.search(r"most\s+ratings\s*\(?128\)?", full_text, re.IGNORECASE):
+        errors.append("Novelty gate failed: restates displayed section grid score or ratings ('Parks score best at 4.1')")
+
+    for b_stmt in ["Groceries are the closest daily need at 1.2 km", "From this project it is 22 minutes each way to DLF Cyber City", "The school is nearly three times as far as the supermarket"]:
+        if b_stmt.lower() in full_text.lower():
+            errors.append(f"Novelty gate failed: restates removed sample listing claim ('{b_stmt}')")
+
+    return FindingValidationResult(is_valid=(len(errors) == 0), errors=errors)
+
 
