@@ -815,6 +815,7 @@ const GeoAICommuteLeafletMap: React.FC<GeoAICommuteMapProps> = ({
       const aMins = activeDest.nearestDurationMins || Math.round(pMins * 1.08);
 
       // Render Alternate Route Polyline with white casing
+      let altPolyline: L.Polyline | null = null;
       if (showBfsShortest) {
         const altCasing = L.polyline(altPoints, {
           color: '#ffffff',
@@ -825,7 +826,7 @@ const GeoAICommuteLeafletMap: React.FC<GeoAICommuteMapProps> = ({
         });
         layerGroupRef.current?.addLayer(altCasing);
 
-        const altPolyline = L.polyline(altPoints, {
+        altPolyline = L.polyline(altPoints, {
           color: altColor,
           weight: altWeight,
           opacity: isAltActive ? 1.0 : 0.85,
@@ -902,9 +903,7 @@ const GeoAICommuteLeafletMap: React.FC<GeoAICommuteMapProps> = ({
 
       // Bring active layer to front
       if (isAltActive) {
-        layerGroupRef.current?.eachLayer(layer => {
-          if (layer === altPolyline) layer.bringToFront();
-        });
+        altPolyline?.bringToFront();
       } else {
         primaryPolyline.bringToFront();
       }
@@ -1032,6 +1031,11 @@ const CommuteRouteMapVisual: React.FC<CommuteRouteMapVisualProps> = ({ visual, o
     roadDistanceKm: number;
     durationMins: number;
     geometry?: [number, number][];
+    nearestGeometry?: [number, number][];
+    nearestRoadDistanceKm?: number;
+    nearestDurationMins?: number;
+    roadNodesCount?: number;
+    nearestNodesCount?: number;
     provider?: string;
   } | null>(null);
 
@@ -2038,6 +2042,11 @@ const CommuteRouteMapVisual: React.FC<CommuteRouteMapVisualProps> = ({ visual, o
     </div>
   );
 };
+
+interface SectionAIAnalysisVisualProps {
+  visual: DemoVisualData;
+  onAddMyPlaces?: () => void;
+}
 
 export const SectionAIAnalysisVisual: React.FC<SectionAIAnalysisVisualProps> = ({
   visual,

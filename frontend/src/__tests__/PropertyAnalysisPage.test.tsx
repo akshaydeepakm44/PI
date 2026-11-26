@@ -424,7 +424,7 @@ describe('PropertyAnalysisPage – demo mode', () => {
   });
 
   it('picture tab: does not show fetch or XHR (no network calls)', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
     const { PropertyAnalysisPage } = await import('../pages/buyer/PropertyAnalysisPage');
     render(<MemoryRouter><PropertyAnalysisPage /></MemoryRouter>);
     fireEvent.click(screen.getByText(/Upload a picture/i));
@@ -441,7 +441,7 @@ describe('PropertyAnalysisPage – demo mode', () => {
   });
 
   it('link tab: does not make any network calls', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
     const { PropertyAnalysisPage } = await import('../pages/buyer/PropertyAnalysisPage');
     render(<MemoryRouter><PropertyAnalysisPage /></MemoryRouter>);
     fireEvent.click(screen.getByText('Sample A: well-documented project'));
