@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pi-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=sqlite:////app/data/hi_in.db
+      - DEMO_MODE=${DEMO_MODE:-true}
+      - SECRET_KEY=${SECRET_KEY:-hi_in_super_secret_jwt_key_development_2026}
+      - AI_PROVIDER=${AI_PROVIDER:-openai_compatible}
+      - AI_BASE_URL=${AI_BASE_URL:-}
+      - AI_MODEL=${AI_MODEL:-current-model}
+      - AI_API_KEY=${AI_API_KEY:-}
+    volumes:
+      - backend_data:/app/data
+      - backend_uploads:/app/uploads
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_AI_ANALYSIS_MODE: ${VITE_AI_ANALYSIS_MODE:-demo}
+        VITE_PROPERTY_ANALYSIS_DEMO: ${VITE_PROPERTY_ANALYSIS_DEMO:-true}
+    container_name: pi-frontend-proxy
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"
+    depends_on:
+      - backend
+
+volumes:
+  backend_data:
+  backend_uploads:
