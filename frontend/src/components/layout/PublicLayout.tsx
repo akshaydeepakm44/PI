@@ -45,6 +45,7 @@ export const PublicLayout: React.FC = () => {
   const isHome = location.pathname === '/';
   const isListings = location.pathname.startsWith('/directory') || location.pathname.startsWith('/projects');
   const isBuilder = location.pathname.startsWith('/builder');
+  const isPropertyAnalysis = location.pathname.startsWith('/property-analysis');
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfcfc] text-[#111111] antialiased font-sans">
@@ -81,6 +82,13 @@ export const PublicLayout: React.FC = () => {
             onClick={() => setMenuOpen(false)}
           >
             Builder
+          </Link>
+          <Link
+            to="/property-analysis"
+            aria-current={isPropertyAnalysis ? 'page' : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            Property analysis
           </Link>
         </nav>
 

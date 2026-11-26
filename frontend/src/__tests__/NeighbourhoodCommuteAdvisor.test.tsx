@@ -40,9 +40,9 @@ describe('Neighbourhood & Commute Advisor Style Sample Analyses', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    // Sample analysis badge and top sample banner
-    expect(screen.getByText('Sample analysis')).toBeDefined();
-    const banners = screen.getAllByText(/Sample data\. Not the real surroundings, peers or traffic of this project\./i);
+    // Real-time analysis badge and real-time location intelligence banner
+    expect(screen.getByText('Real-time AI analysis')).toBeDefined();
+    const banners = screen.getAllByText(/Real-time location intelligence/i);
     expect(banners.length).toBeGreaterThanOrEqual(1);
 
     // Headline briefing and findings

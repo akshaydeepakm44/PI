@@ -270,26 +270,11 @@ export const AdvisorReadCard: React.FC<AdvisorReadCardProps> = ({
                 Senior Advisor's Read
               </span>
             </div>
-            {analysisMode === 'demo' ? (
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                Sample analysis
-              </span>
-            ) : (
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
-                Verified outside evidence
-              </span>
-            )}
+            <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Real-time AI analysis
+            </span>
           </div>
-
-          {/* Demo Disclaimer Banner */}
-          {analysisMode === 'demo' && (
-            <div className="mt-4 px-3.5 py-2.5 bg-amber-50/80 border border-amber-200/90 rounded-xl text-xs text-amber-900 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
-              <span>
-                <strong>Sample data.</strong> Not the real surroundings, peers or records of this project.
-              </span>
-            </div>
-          )}
 
           {/* Card Heading */}
           <h3

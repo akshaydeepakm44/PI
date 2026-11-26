@@ -23,6 +23,7 @@ import { BuyerEnquiriesPage } from './pages/buyer/BuyerEnquiriesPage';
 import { InteractiveMapPage } from './pages/buyer/InteractiveMapPage';
 import { AIAssistantPage } from './pages/buyer/AIAssistantPage';
 import { GlobalAIAssistantWidget } from './components/assistant/GlobalAIAssistantWidget';
+import { PropertyAnalysisPage } from './pages/buyer/PropertyAnalysisPage';
 
 // Seller Pages
 import { BuilderPage } from './pages/seller/BuilderPage';
@@ -91,6 +92,7 @@ export const App: React.FC = () => {
               <Route path="/shortlists" element={<DashboardPage initialTab="projects" />} />
               <Route path="/buyer" element={<DashboardPage initialTab="projects" />} />
               <Route path="/assistant" element={<AIAssistantPage />} />
+              <Route path="/property-analysis" element={<PropertyAnalysisPage />} />
               <Route path="/builder" element={<BuilderPage />} />
               <Route path="/builder/create" element={<BuilderPage />} />
               <Route path="/seller/create" element={<BuilderPage />} />

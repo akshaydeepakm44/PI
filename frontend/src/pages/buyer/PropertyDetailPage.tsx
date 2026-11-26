@@ -114,10 +114,11 @@ const LIVEABILITY_DATA: [string, string, string, number, string][] = [
 ];
 
 const COMMUTE_DESTINATIONS = [
-  { name: 'DLF Cyber City', subtitle: 'Office park · Gachibowli', distance: '8.5', time: '22', frequency: 'Daily' },
-  { name: 'Gachibowli Stadium', subtitle: 'Sports venue · Gachibowli', distance: '9', time: '24', frequency: 'Frequently' },
-  { name: 'Indian School of Business', subtitle: 'Campus · Gachibowli', distance: '10', time: '28', frequency: 'Frequently' },
-  { name: 'Rajiv Gandhi Intl Airport', subtitle: 'Airport · Shamshabad', distance: '32', time: '38', frequency: 'Occasionally' }
+  { name: 'DLF Cyber City', subtitle: 'Office park · Gachibowli', distance: '5.7', time: '22', frequency: 'Daily' },
+  { name: 'Oakridge International', subtitle: 'School · Khajaguda', distance: '4.9', time: '13', frequency: 'Daily' },
+  { name: 'Gachibowli Stadium', subtitle: 'Sports venue · Gachibowli', distance: '2.1', time: '8', frequency: 'Frequently' },
+  { name: 'Indian School of Business', subtitle: 'Campus · Gachibowli', distance: '3.1', time: '12', frequency: 'Frequently' },
+  { name: 'Rajiv Gandhi Intl Airport', subtitle: 'Airport · Shamshabad', distance: '31.7', time: '32', frequency: 'Occasionally' }
 ];
 
 const TOWERS_DATA = [
@@ -550,22 +551,37 @@ return (
             </p>
           </div>
 
-          <div className="commute-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 my-4">
             {COMMUTE_DESTINATIONS.map((dest) => (
-              <article key={dest.name} className="commute-card">
-                <div className="commute-title">
-                  <h3>{dest.name}</h3>
-                  <p>{dest.subtitle}</p>
-                  <span className="small-tag mt-1">{dest.frequency}</span>
-                </div>
-                <div className="commute-values">
-                  <div>
-                    <small>Time</small>
-                    <p><strong>{dest.time}</strong> mins</p>
+              <article
+                key={dest.name}
+                className="bg-white border border-slate-200 hover:border-teal-500/60 hover:shadow-sm rounded-xl p-3.5 flex flex-col justify-between shadow-xs transition-all min-h-[155px]"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                      {dest.frequency}
+                    </span>
                   </div>
+                  <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 min-h-[2.5rem]" title={dest.name}>
+                    {dest.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 line-clamp-1 mt-1">
+                    {dest.subtitle}
+                  </p>
+                </div>
+                <div className="flex items-end justify-between pt-2.5 border-t border-slate-100 mt-2">
                   <div>
-                    <small>Distance</small>
-                    <p>{dest.distance} km</p>
+                    <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400">Time</span>
+                    <p className="text-base font-bold text-slate-900 leading-none mt-0.5">
+                      {dest.time} <span className="text-xs font-normal text-slate-500">mins</span>
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400">Distance</span>
+                    <p className="text-sm font-semibold text-slate-700 leading-none mt-0.5">
+                      {dest.distance} <span className="text-xs font-normal text-slate-500">km</span>
+                    </p>
                   </div>
                 </div>
               </article>

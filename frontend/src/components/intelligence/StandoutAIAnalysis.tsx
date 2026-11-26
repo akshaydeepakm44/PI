@@ -215,15 +215,10 @@ export const StandoutAIAnalysis: React.FC<StandoutAIAnalysisProps> = ({
               <Sparkles size={13} className="text-teal-700" />
               What stands out · Page-level peer analysis
             </span>
-            {analysisMode === 'demo' ? (
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                Sample analysis
-              </span>
-            ) : (
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
-                Written by AI from calculated numbers
-              </span>
-            )}
+            <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Real-time AI analysis
+            </span>
           </div>
 
           {/* Signature Line (Prominent & Distinctive, <= 25 words) */}

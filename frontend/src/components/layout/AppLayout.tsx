@@ -23,7 +23,8 @@ import {
   Bell,
   Sparkles,
   ArrowRightLeft,
-  Bot
+  Bot,
+  FlaskConical
 } from 'lucide-react';
 import { Badge } from '../common/Badge';
 
@@ -67,7 +68,8 @@ export const AppLayout: React.FC = () => {
       { label: 'My Wishlist', path: '/buyer/wishlist', icon: Heart },
       { label: 'Compare Properties', path: '/buyer/compare', icon: Scale },
       { label: 'My Commute', path: '/buyer/commute', icon: Navigation },
-      { label: 'My Enquiries', path: '/buyer/enquiries', icon: MessageSquare }
+      { label: 'My Enquiries', path: '/buyer/enquiries', icon: MessageSquare },
+      { label: 'Property analysis', path: '/property-analysis', icon: FlaskConical },
     ];
   };
 

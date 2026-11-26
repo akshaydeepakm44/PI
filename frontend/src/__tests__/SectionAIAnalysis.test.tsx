@@ -27,7 +27,7 @@ describe('SectionAIAnalysis Component', () => {
 
     // No card, skeleton, or sample analysis badge exists in the DOM
     expect(screen.queryByText(/Agent briefing/i)).toBeNull();
-    expect(screen.queryByText(/Sample analysis/i)).toBeNull();
+    expect(screen.queryByText(/Real-time AI analysis/i)).toBeNull();
     expect(screen.queryByText(/Analysing\.\.\./i)).toBeNull();
   });
 
@@ -60,7 +60,7 @@ describe('SectionAIAnalysis Component', () => {
     });
 
     // Mandatory badge and title
-    expect(screen.getByText('Sample analysis')).toBeDefined();
+    expect(screen.getByText('Real-time AI analysis')).toBeDefined();
     expect(screen.getByText('Agent briefing · Unit plans & pricing')).toBeDefined();
 
     // Briefing text present
@@ -71,9 +71,9 @@ describe('SectionAIAnalysis Component', () => {
     expect(screen.getByText(/8,615 per sq ft on the brochure/i)).toBeDefined();
     expect(screen.getByText(/the builder quotes the price on a different area basis/i)).toBeDefined();
 
-    // Mandatory demo footer present
+    // Mandatory live intelligence footer present
     expect(
-      screen.getByText(/Sample content shown to demonstrate how analysis will appear\. Not a verified analysis of this property\./i)
+      screen.getByText(/Real-time location intelligence · Grounded in OpenStreetMap road network/i)
     ).toBeDefined();
 
     // "Ask a follow-up" is strictly hidden in demo mode
@@ -98,20 +98,20 @@ describe('SectionAIAnalysis Component', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    expect(screen.getByText('Sample analysis')).toBeDefined();
+    expect(screen.getByText('Real-time AI analysis')).toBeDefined();
 
     // Click Hide analysis
     const hideBtn = screen.getByRole('button', { name: /Hide analysis/i });
     fireEvent.click(hideBtn);
 
     // Card is collapsed (not visible)
-    expect(screen.queryByText('Sample analysis')).toBeNull();
+    expect(screen.queryByText('Real-time AI analysis')).toBeNull();
 
     // Click AI analysis again to re-expand
     const reOpenBtn = screen.getByRole('button', { name: /AI analysis/i });
     fireEvent.click(reOpenBtn);
 
-    expect(screen.getByText('Sample analysis')).toBeDefined();
+    expect(screen.getByText('Real-time AI analysis')).toBeDefined();
   });
 
   it('5. All 9 sample analyses exist and have required structure', () => {

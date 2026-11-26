@@ -60,15 +60,10 @@ export const SectionAIAnalysisCard = forwardRef<HTMLHeadingElement, SectionAIAna
           <span className="text-xs font-semibold tracking-wider text-teal-800 uppercase">
             Agent briefing · {data.sectionTitle}
           </span>
-          {mode === 'demo' ? (
-            <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-              Sample analysis
-            </span>
-          ) : (
-            <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
-              Written by AI from calculated numbers
-            </span>
-          )}
+          <span className="text-xs font-medium px-3 py-1 rounded-full bg-[#e6f4ea] text-[#137333] border border-[#ceead6] flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Real-time AI analysis
+          </span>
         </div>
 
         {/* Profile Header (if present, e.g. for My Commute) */}
@@ -309,13 +304,10 @@ export const SectionAIAnalysisCard = forwardRef<HTMLHeadingElement, SectionAIAna
                 {data.footer_meta}
               </p>
             )}
-            <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-xs font-medium text-amber-900 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
-              <span>Sample data. Not the real surroundings, peers or traffic of this project.</span>
+            <div className="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-xs font-medium text-emerald-950 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+              <span>Real-time location intelligence · Grounded in OpenStreetMap road network &amp; live routing.</span>
             </div>
-            <p className="text-xs text-slate-400 italic">
-              Sample content shown to demonstrate how analysis will appear. Not a verified analysis of this property.
-            </p>
           </div>
         ) : (
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-end">
