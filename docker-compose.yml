@@ -1,4 +1,20 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hi_in_db}
+      POSTGRES_USER: ${POSTGRES_USER:-hi_in_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hi_in_strong_password_2026}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hi_in_user} -d ${POSTGRES_DB:-hi_in_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./backend
@@ -6,18 +22,20 @@ services:
     container_name: pi-backend
     restart: unless-stopped
     environment:
-      - DATABASE_URL=sqlite:////app/data/hi_in.db
-      - DEMO_MODE=${DEMO_MODE:-true}
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg2://${POSTGRES_USER:-hi_in_user}:${POSTGRES_PASSWORD:-hi_in_strong_password_2026}@postgres:5432/${POSTGRES_DB:-hi_in_db}}
+      - DEMO_MODE=${DEMO_MODE:-false}
       - SECRET_KEY=${SECRET_KEY:-hi_in_super_secret_jwt_key_development_2026}
       - AI_PROVIDER=${AI_PROVIDER:-openai_compatible}
       - AI_BASE_URL=${AI_BASE_URL:-}
       - AI_MODEL=${AI_MODEL:-current-model}
       - AI_API_KEY=${AI_API_KEY:-}
     volumes:
-      - backend_data:/app/data
       - backend_uploads:/app/uploads
     expose:
       - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
@@ -34,5 +52,5 @@ services:
       - backend
 
 volumes:
-  backend_data:
+  postgres_data:
   backend_uploads:
